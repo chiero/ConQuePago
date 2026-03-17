@@ -70,3 +70,65 @@ self.addEventListener('activate', event => {
     })
   );
 });
+
+/* ============================================================
+   PUSH NOTIFICATIONS (HANDLERS)
+=========================================================== */
+self.addEventListener('push', event => {
+  let title = 'ConQuePago';
+  let body = 'Tenés una nueva recomendación de ahorro.';
+  let icon = '/icon-192.png';
+  let badge = '/icon-192.png';
+  
+  if (event.data) {
+    try {
+      const data = event.data.json();
+      title = data.title || title;
+      body = data.body || body;
+      icon = data.icon || icon;
+      badge = data.badge || badge;
+    } catch (e) {
+      body = event.data.text();
+    }
+  }
+
+  const options = {
+    body: body,
+    icon: icon,
+    badge: badge,
+    vibrate: [100, 50, 100],
+    data: {
+      dateOfArrival: Date.now(),
+      primaryKey: 1
+    },
+    actions: [
+      {action: 'explore', title: 'Ver Promos', icon: ''}
+    ]
+  };
+
+  event.waitUntil(
+    self.registration.showNotification(title, options)
+  );
+});
+
+self.addEventListener('notificationclick', event => {
+  console.log('Notification click Received.');
+  event.notification.close();
+  
+  // Abre la app o hace foco si ya está abierta
+  event.waitUntil(
+    clients.matchAll({ type: 'window' }).then(windowClients => {
+      // Si la app ya está abierta, hace foco
+      for (let i = 0; i < windowClients.length; i++) {
+        let client = windowClients[i];
+        if (client.url === '/' && 'focus' in client) {
+          return client.focus();
+        }
+      }
+      // Si no, la abre
+      if (clients.openWindow) {
+        return clients.openWindow('/');
+      }
+    })
+  );
+});

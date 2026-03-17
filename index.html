@@ -399,6 +399,25 @@ body{font-family:var(--font);background:var(--bg0);color:var(--text1);min-height
 
   <div class="section-label">🔥 Top promos para vos hoy</div>
   <div id="home-promos"></div>
+
+  <div class="section-label" style="margin-top:24px;">📅 Promos de la semana</div>
+  <div class="filter-scroll" id="weekly-promos-scroll" style="margin-bottom:16px;">
+    <!-- Filled by JS -->
+  </div>
+
+  <div class="card glass accent-border" style="margin-top:20px; display:flex; flex-direction:column; gap:12px;">
+    <div style="display:flex; align-items:center; gap:12px;">
+      <div style="font-size:24px;">🔔</div>
+      <div>
+        <div style="font-size:14px; font-weight:700;">Notificaciones Diarias</div>
+        <div style="font-size:12px; color:var(--text2); line-height:1.4;">Recibí la mejor promo de tus tarjetas cada mañana a las 8 AM.</div>
+      </div>
+    </div>
+    <div style="display:flex; gap:8px; margin-top:4px;">
+      <button onclick="setupPushNotifications()" id="btn-push-setup" style="flex:1; background:var(--accent); color:#fff; border:none; padding:10px; border-radius:8px; font-weight:600; cursor:pointer;">Activar 8 AM</button>
+      <button onclick="simulatePushNotification()" style="flex:1; background:var(--bg3); color:var(--text1); border:1px solid var(--glass-border); padding:10px; border-radius:8px; font-weight:600; cursor:pointer;">Simular Ahora</button>
+    </div>
+  </div>
 </div>
 
 <!-- ===== PROMOS ===== -->
@@ -1135,6 +1154,7 @@ async function init(){
   window._dolarData=dolarData;
   renderHome(dolarData);
   renderSavings(dolarData);
+  renderWeeklyPromos();
 
   // Hide splash screen
   setTimeout(() => {
@@ -1171,6 +1191,174 @@ toggleTheme = function() {
   originalToggleTheme();
   updateThemeMeta(isDark);
 };
+
+/* ============================================================
+   WEEKLY PROMOS CALENDAR
+=========================================================== */
+function renderWeeklyPromos() {
+  const container = document.getElementById('weekly-promos-scroll');
+  if(!container) return;
+  container.innerHTML = '';
+  
+  const dias = [
+    {id:1, name:'Lunes', short:'Lun'},
+    {id:2, name:'Martes', short:'Mar'},
+    {id:3, name:'Miércoles', short:'Mié'},
+    {id:4, name:'Jueves', short:'Jue'},
+    {id:5, name:'Viernes', short:'Vie'},
+    {id:6, name:'Sábado', short:'Sáb'},
+    {id:0, name:'Domingo', short:'Dom'}
+  ];
+  
+  const myBanks = BANKS.filter(b=>userCards.includes(b.id));
+  const hoyId = new Date().getDay();
+  
+  dias.forEach(d => {
+    // Buscar la mejor promo para este dia de las tarjetas activas
+    let best = null;
+    let bestBanco = null;
+    
+    myBanks.forEach(b => {
+      b.promos.forEach(p => {
+        const v = p.vigencia.toLowerCase();
+        // Lógica súper básica de matcheo (en prod usar la función promoEsHoy modificada para aceptar un día específico)
+        const dayMatch = (d.id===1 && v.includes('lun')) || 
+                         (d.id===2 && v.includes('mar')) ||
+                         (d.id===3 && v.includes('mié')) ||
+                         (d.id===4 && v.includes('jue')) ||
+                         (d.id===5 && v.includes('vie')) ||
+                         (d.id===6 && v.includes('sáb')) ||
+                         (d.id===0 && v.includes('dom')) ||
+                         v.includes('todos') || v.includes('todo el mes');
+                         
+        if(dayMatch) {
+          if(!best || parseInt(p.desc) > parseInt(best.desc) || (parseInt(p.desc) === parseInt(best.desc) && p.rubro === 'supermercados')) {
+            best = p;
+            bestBanco = b;
+          }
+        }
+      });
+    });
+    
+    // Crear la tarjeta
+    const isHoy = d.id === hoyId;
+    const el = document.createElement('div');
+    el.className = 'promo-card';
+    el.style.minWidth = '200px';
+    el.style.marginRight = '12px';
+    el.style.flexShrink = '0';
+    if(isHoy) {
+      el.classList.add('green-border');
+    }
+    
+    if(best) {
+      el.innerHTML = `
+        <div style="padding:10px 14px; border-bottom:1px solid var(--glass-border); display:flex; justify-content:space-between; align-items:center;">
+          <div style="font-weight:700; font-size:14px; color:${isHoy? 'var(--green)' : 'var(--text1)'}">${isHoy? '⭐ Hoy' : d.name}</div>
+          <div class="bank-logo" style="width:28px; height:28px; background:${bestBanco.color}; font-size:12px;">${bestBanco.icon}</div>
+        </div>
+        <div style="padding:12px 14px; display:flex; flex-direction:column; gap:4px;">
+          <div style="font-size:22px; font-weight:800; color:var(--green);">${best.desc}</div>
+          <div style="font-size:13px; font-weight:600;">${best.comercio}</div>
+          <div style="font-size:11px; color:var(--text2); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Tope ${best.tope}</div>
+        </div>
+      `;
+    } else {
+      el.innerHTML = `
+        <div style="padding:10px 14px; border-bottom:1px solid var(--glass-border);">
+          <div style="font-weight:700; font-size:14px; color:${isHoy? 'var(--green)' : 'var(--text1)'}">${isHoy? '⭐ Hoy' : d.name}</div>
+        </div>
+        <div style="padding:22px 14px; text-align:center; color:var(--text3); font-size:13px;">
+          Sin promos fuertes
+        </div>
+      `;
+    }
+    container.appendChild(el);
+  });
+}
+
+/* ============================================================
+   PUSH NOTIFICATIONS (MOCK FRONTEND / SERVICE WORKER)
+=========================================================== */
+async function setupPushNotifications() {
+  const btn = document.getElementById('btn-push-setup');
+  
+  if (!('Notification' in window)) {
+    alert('Este navegador no soporta notificaciones de escritorio.');
+    return;
+  }
+  
+  if (Notification.permission === 'granted') {
+    btn.textContent = '✅ Activadas';
+    btn.style.background = 'var(--green)';
+    alert('¡Notificaciones ya estaban activadas! Recibirás los avisos a las 8 AM.');
+    return;
+  }
+  
+  if (Notification.permission !== 'denied') {
+    btn.textContent = 'Solicitando...';
+    const permission = await Notification.requestPermission();
+    if (permission === 'granted') {
+      btn.textContent = '✅ Activadas';
+      btn.style.background = 'var(--green)';
+      // En un entorno real, aca nos subscribimos al pushManager
+      // y mandamos la subscripción al backend:
+      /*
+      const sw = await navigator.serviceWorker.ready;
+      const sub = await sw.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: 'YOUR_PUBLIC_VAPID_KEY'
+      });
+      await fetch('/api/subscribe', { method: 'POST', body: JSON.stringify(sub) });
+      */
+      alert('¡Listo! Te avisaremos cada mañana sobre la mejor promo del día.');
+    } else {
+      btn.textContent = 'Activar 8 AM';
+    }
+  }
+}
+
+function simulatePushNotification() {
+  if (Notification.permission !== 'granted') {
+    alert('Primero debes activar las notificaciones haciendo clic en "Activar 8 AM" y dando permisos en el navegador.');
+    return;
+  }
+  
+  // Buscar una recomendación (igual que en Home)
+  const myBanks = BANKS.filter(b=>userCards.includes(b.id));
+  let bestPromo = null;
+  myBanks.forEach(b => {
+    b.promos.forEach(p => {
+      if(promoEsHoy(p.vigencia) && p.rubro === 'supermercados') {
+        if(!bestPromo || parseInt(p.desc) > parseInt(bestPromo.pct)) {
+          bestPromo = {bank:b.name, icon:b.icon, ...p, pct:parseInt(p.desc)};
+        }
+      }
+    });
+  });
+  
+  const title = bestPromo ? 'Tu Asistente ConQuePago ☀️' : 'ConQuePago - Sin promos fuertes hoy';
+  const body = bestPromo ? 
+    `Hoy usá ${bestPromo.bank} en ${bestPromo.comercio} — ${bestPromo.desc} de ahorro` : 
+    'Hoy no detectamos promos en supermercados con tus tarjetas activas.';
+    
+  // Intentar usar el Service Worker si está activo (permite mostrar on click, etc.)
+  navigator.serviceWorker.getRegistration().then(reg => {
+    if (reg) {
+      reg.showNotification(title, {
+        body: body,
+        icon: '/icon-192.png',
+        badge: '/icon-192.png',
+        vibrate: [100, 50, 100],
+        data: { url: '/' },
+        actions: [{action: 'open', title: 'Ver promos'}]
+      });
+    } else {
+      // Fallback a API de notificación nativa
+      new Notification(title, { body: body, icon: '/icon-192.png' });
+    }
+  });
+}
 
 </script>
 </body>
