@@ -1,0 +1,27 @@
+{
+  "name": "conquepago",
+  "version": "1.0.0",
+  "description": "",
+  "main": "service-worker.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "scrape": "node scraper.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chiero/ConQuePago.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/chiero/ConQuePago/issues"
+  },
+  "homepage": "https://github.com/chiero/ConQuePago#readme",
+  "dependencies": {
+    "cheerio": "^1.2.0",
+    "fs-extra": "^11.3.4",
+    "puppeteer": "^24.39.1"
+  }
+}

@@ -400,24 +400,7 @@ body{font-family:var(--font);background:var(--bg0);color:var(--text1);min-height
   <div class="section-label">🔥 Top promos para vos hoy</div>
   <div id="home-promos"></div>
 
-  <div class="section-label" style="margin-top:24px;">📅 Promos de la semana</div>
-  <div class="filter-scroll" id="weekly-promos-scroll" style="margin-bottom:16px;">
-    <!-- Filled by JS -->
-  </div>
 
-  <div class="card glass accent-border" style="margin-top:20px; display:flex; flex-direction:column; gap:12px;">
-    <div style="display:flex; align-items:center; gap:12px;">
-      <div style="font-size:24px;">🔔</div>
-      <div>
-        <div style="font-size:14px; font-weight:700;">Notificaciones Diarias</div>
-        <div style="font-size:12px; color:var(--text2); line-height:1.4;">Recibí la mejor promo de tus tarjetas cada mañana a las 8 AM.</div>
-      </div>
-    </div>
-    <div style="display:flex; gap:8px; margin-top:4px;">
-      <button onclick="setupPushNotifications()" id="btn-push-setup" style="flex:1; background:var(--accent); color:#fff; border:none; padding:10px; border-radius:8px; font-weight:600; cursor:pointer;">Activar 8 AM</button>
-      <button onclick="simulatePushNotification()" style="flex:1; background:var(--bg3); color:var(--text1); border:1px solid var(--glass-border); padding:10px; border-radius:8px; font-weight:600; cursor:pointer;">Simular Ahora</button>
-    </div>
-  </div>
 </div>
 
 <!-- ===== PROMOS ===== -->
@@ -531,6 +514,7 @@ body{font-family:var(--font);background:var(--bg0);color:var(--text1);min-height
 // Fuentes: carrefour.com.ar/descuentos-bancarios, naranjax.com/beneficios
 
 /* Detecta si una promo es válida HOY (lun=1..dom=0) */
+/* Detecta si una promo es válida HOY (lun=1..dom=0) */
 function promoEsHoy(vigencia){
   if(!vigencia) return false;
   const v=vigencia.toLowerCase();
@@ -543,170 +527,13 @@ function promoEsHoy(vigencia){
   return false;
 }
 
-const BANKS = [
-  {
-    id:'galicia',name:'Banco Galicia',icon:'🏛️',color:'linear-gradient(135deg,#1e3a8a,#3b82f6)',
-    promos:[
-      // ✅ Verificado en carrefour.com.ar/descuentos-bancarios?entidad=Banco%20Galicia
-      {rubro:'supermercados',comercio:'Carrefour (Hiper, Market, Express)',desc:'3 cuotas sin interés',tope:'Sin tope',vigencia:'jue·vie·sáb·dom',card:'Crédito Visa y Mastercard',nota:'Excluye Electro y Bazar'},
-      // ✅ Promobanco Galicia página oficial
-      {rubro:'combustible',comercio:'YPF (con Modo Galicia)',desc:'15% off',tope:'$5.000 / mes',vigencia:'Todos los días',card:'Crédito Galicia'},
-      {rubro:'delivery',comercio:'PedidosYa',desc:'30% off',tope:'$2.000 / cupón',vigencia:'mar·jue',card:'Mastercard Crédito'},
-      {rubro:'viajes',comercio:'Despegar.com',desc:'12 cuotas sin interés',tope:'Sin tope',vigencia:'Todo el mes',card:'Visa / Mastercard Galicia'},
-    ]
-  },
-  {
-    id:'bbva',name:'BBVA',icon:'💙',color:'linear-gradient(135deg,#004481,#1464A0)',
-    promos:[
-      // Sin promo directa en Carrefour al 16/03/2026 — usar QR MODO los sábados
-      {rubro:'supermercados',comercio:'Carrefour (vía QR MODO)',desc:'10% off QR',tope:'Sin tope',vigencia:'sábados',card:'QR MODO con cuenta BBVA',nota:'Via billetera MODO'},
-      {rubro:'electronica',comercio:'Frávega, Musimundo, Garbarino',desc:'12 cuotas sin interés',tope:'Sin tope',vigencia:'Todo el mes',card:'Mastercard BBVA'},
-      {rubro:'viajes',comercio:'Despegar.com',desc:'10% off + 6 cuotas sin interés',tope:'$10.000 / compra',vigencia:'Todo el mes',card:'Crédito BBVA'},
-      {rubro:'farmacia',comercio:'Farmacity, Punto Farma',desc:'15% off',tope:'$3.500',vigencia:'lun·mié·vie',card:'Débito BBVA'},
-    ]
-  },
-  {
-    id:'naranjax',name:'Naranja X',icon:'🍊',color:'linear-gradient(135deg,#ea580c,#f97316)',
-    promos:[
-      // ✅ Verificado en carrefour.com.ar/descuentos-bancarios?entidad=Naranja%20X
-      {rubro:'supermercados',comercio:'Carrefour (Hiper, Market, Express y online)',desc:'25% off',tope:'$12.000 / semana',vigencia:'Martes',card:'Naranja X (plan suscripción)',nota:'Requiere plan NX activo'},
-      {rubro:'supermercados',comercio:'Carrefour (débito)',desc:'15% off',tope:'$6.000 / semana',vigencia:'Martes',card:'Débito Visa Naranja X'},
-      {rubro:'indumentaria',comercio:'Falabella, Zara, H&M',desc:'20% off',tope:'$8.000',vigencia:'Miércoles',card:'Naranja X'},
-      {rubro:'delivery',comercio:'Rappi, PedidosYa',desc:'10% off',tope:'$1.500',vigencia:'Todos los días',card:'Naranja X'},
-    ]
-  },
-  {
-    id:'mercadopago',name:'Mercado Pago',icon:'💛',color:'linear-gradient(135deg,#009EE3,#00B2E3)',
-    promos:[
-      // ✅ Verificado — promo lunes en Carrefour exclusiva app/online
-      {rubro:'supermercados',comercio:'Carrefour (online/app)',desc:'20% off',tope:'$15.000',vigencia:'Lunes',card:'Dinero en cuenta MP',nota:'Solo online y app Carrefour'},
-      {rubro:'supermercados',comercio:'Changomas, Punto Mayorista (QR)',desc:'10% off',tope:'$2.000',vigencia:'Todos los días',card:'QR Mercado Pago'},
-      {rubro:'delivery',comercio:'McDonald\'s, Burger King, Wendy\'s',desc:'20% off',tope:'$1.200',vigencia:'Todos los días',card:'Dinero en cuenta MP'},
-      {rubro:'farmacia',comercio:'Farmacity',desc:'15% off',tope:'$2.500',vigencia:'lun a vie',card:'QR Mercado Pago'},
-    ]
-  },
-  {
-    id:'modo',name:'MODO',icon:'⚡',color:'linear-gradient(135deg,#7c3aed,#a855f7)',
-    promos:[
-      // ✅ Verificado en carrefour.com.ar — "Todas las Billeteras" aplica a MODO
-      {rubro:'supermercados',comercio:'Carrefour (Hiper, Market, Express)',desc:'10% off QR',tope:'Sin tope',vigencia:'Sábados',card:'QR MODO (bancos adheridos)',nota:'Excluye Electro'},
-      {rubro:'combustible',comercio:'Shell',desc:'12% off',tope:'Sin tope',vigencia:'Todo el mes',card:'QR MODO'},
-      {rubro:'farmacia',comercio:'Farmacity, Dr. Ahorro',desc:'10% off',tope:'$1.500',vigencia:'lun·mié·vie',card:'QR MODO'},
-      {rubro:'delivery',comercio:'Rappi (seleccionados)',desc:'15% off',tope:'$1.000',vigencia:'Todos los días',card:'QR MODO'},
-    ]
-  },
-  {
-    id:'santander',name:'Santander',icon:'🔴',color:'linear-gradient(135deg,#8b0000,#cc0000)',
-    promos:[
-      {rubro:'supermercados',comercio:'Walmart, Changomas',desc:'20% off',tope:'$3.000',vigencia:'mié·jue',card:'Mastercard Santander'},
-      {rubro:'indumentaria',comercio:'Zara, H&M, Pull&Bear, Falabella',desc:'25% off',tope:'$8.000',vigencia:'Martes y Jueves',card:'Visa Santander'},
-      {rubro:'electronica',comercio:'Frávega, Garbarino',desc:'6 cuotas sin interés',tope:'Sin tope',vigencia:'Todo el mes',card:'Crédito Santander'},
-      {rubro:'viajes',comercio:'Almundo, Avantrip',desc:'15% off',tope:'$12.000',vigencia:'Todo el mes',card:'Mastercard Santander'},
-    ]
-  },
-  // ─────────────── NUEVOS BANCOS Y FINTECHS ───────────────
-  {
-    id:'nacion',name:'Banco Nación (BNA+)',icon:'🇦🇷',color:'linear-gradient(135deg,#0054a6,#0072c6)',
-    promos:[
-      {rubro:'supermercados',comercio:'Carrefour, Coto',desc:'20% off',tope:'$4.000',vigencia:'Miércoles',card:'BNA+ MODO'},
-      {rubro:'combustible',comercio:'YPF',desc:'10% off',tope:'$3.000 / mes',vigencia:'Todos los días',card:'BNA+ MODO'}
-    ]
-  },
-  {
-    id:'provincia',name:'Banco Provincia (Cuenta DNI)',icon:'🟢',color:'linear-gradient(135deg,#006837,#39b54a)',
-    promos:[
-      {rubro:'supermercados',comercio:'Carrefour, Coto, Toledo',desc:'20% off',tope:'$4.500',vigencia:'sáb·dom',card:'Cuenta DNI'},
-      {rubro:'delivery',comercio:'PedidosYa',desc:'30% off',tope:'$2.000',vigencia:'Miércoles',card:'Cuenta DNI'}
-    ]
-  },
-  {
-    id:'patagonia',name:'Banco Patagonia',icon:'🏔️',color:'linear-gradient(135deg,#0033a0,#005eb8)',
-    promos:[
-      {rubro:'supermercados',comercio:'Jumbo, Disco, Vea',desc:'20% off',tope:'$3.000',vigencia:'Jueves',card:'Visa Patagonia'},
-      {rubro:'delivery',comercio:'Rappi',desc:'25% off',tope:'$1.500',vigencia:'Martes',card:'Mastercard Patagonia'}
-    ]
-  },
-  {
-    id:'icbc',name:'ICBC',icon:'🔴',color:'linear-gradient(135deg,#c8102e,#e31837)',
-    promos:[
-      {rubro:'supermercados',comercio:'Coto, Carrefour',desc:'20% off',tope:'$4.000',vigencia:'Viernes',card:'Visa ICBC'},
-      {rubro:'indumentaria',comercio:'Zara, Falabella',desc:'25% off',tope:'$6.000',vigencia:'Miércoles',card:'Mastercard ICBC'}
-    ]
-  },
-  {
-    id:'hsbc',name:'HSBC',icon:'⬛',color:'linear-gradient(135deg,#db0011,#ff0000)',
-    promos:[
-      {rubro:'supermercados',comercio:'Jumbo, Disco',desc:'15% off',tope:'$3.500',vigencia:'Sábados',card:'Visa HSBC'},
-      {rubro:'farmacia',comercio:'Farmacity',desc:'20% off',tope:'$2.000',vigencia:'Martes',card:'Mastercard HSBC'}
-    ]
-  },
-  {
-    id:'macro',name:'Banco Macro',icon:'🟠',color:'linear-gradient(135deg,#c2410c,#f97316)',
-    promos:[
-      {rubro:'supermercados',comercio:'Jumbo, Disco, Vea',desc:'20% off',tope:'$3.500',vigencia:'Martes',card:'Visa Macro'},
-      {rubro:'supermercados',comercio:'Carrefour',desc:'15% off',tope:'$2.500',vigencia:'Viernes',card:'Mastercard Macro'},
-      {rubro:'combustible',comercio:'Axion Energy',desc:'12% off',tope:'$4.000 / mes',vigencia:'Todos los días',card:'Crédito Macro'},
-      {rubro:'indumentaria',comercio:'Falabella, Zara outlet',desc:'15% off',tope:'$6.000',vigencia:'Miércoles',card:'Visa Macro'},
-      {rubro:'viajes',comercio:'Almundo.com',desc:'10% off + 3 cuotas si',tope:'$10.000',vigencia:'Todo el mes',card:'Visa / Mastercard Macro'},
-    ]
-  },
-  {
-    id:'ciudad',name:'Banco Ciudad',icon:'🏙️',color:'linear-gradient(135deg,#155e75,#0891b2)',
-    promos:[
-      {rubro:'supermercados',comercio:'Carrefour, Coto, Dia',desc:'25% off',tope:'$4.000',vigencia:'Miércoles',card:'Visa / Mastercard Ciudad'},
-      {rubro:'farmacia',comercio:'Farmacity, Punto Farma',desc:'20% off',tope:'$3.000',vigencia:'lun·mié·vie',card:'Crédito Ciudad'},
-      {rubro:'combustible',comercio:'YPF, Axion',desc:'15% off',tope:'$5.000 / mes',vigencia:'Todos los días',card:'Crédito Ciudad'},
-      {rubro:'delivery',comercio:'PedidosYa',desc:'25% off',tope:'$1.500',vigencia:'Jueves',card:'Mastercard Ciudad'},
-    ]
-  },
-  {
-    id:'yoy',name:'YOY',icon:'🟡',color:'linear-gradient(135deg,#854d0e,#eab308)',
-    promos:[
-      {rubro:'supermercados',comercio:'Carrefour, Coto, Walmart',desc:'5% cashback',tope:'$3.000 / mes',vigencia:'Todos los días',card:'Tarjeta YOY'},
-      {rubro:'combustible',comercio:'Axion, Shell, Puma',desc:'3% cashback',tope:'$2.000 / mes',vigencia:'Todos los días',card:'Tarjeta YOY'},
-      {rubro:'farmacia',comercio:'Farmacity, Dr. Ahorro',desc:'4% cashback',tope:'$1.500 / mes',vigencia:'Todos los días',card:'Tarjeta YOY'},
-      {rubro:'delivery',comercio:'PedidosYa, Rappi',desc:'6% cashback',tope:'$1.000 / mes',vigencia:'Todos los días',card:'Tarjeta YOY'},
-    ]
-  },
-  {
-    id:'uala',name:'Ualá',icon:'🟣',color:'linear-gradient(135deg,#4c1d95,#7c3aed)',
-    promos:[
-      {rubro:'supermercados',comercio:'Carrefour, Coto (QR)',desc:'10% off',tope:'$2.500',vigencia:'lun·mié·vie',card:'Prepaga Mastercard Ualá'},
-      {rubro:'farmacia',comercio:'Farmacity',desc:'15% off',tope:'$2.000',vigencia:'mar·jue',card:'Prepaga Mastercard Ualá'},
-      {rubro:'delivery',comercio:'Rappi, PedidosYa',desc:'10% off',tope:'$1.000',vigencia:'Todos los días',card:'Ualá'},
-      {rubro:'electronica',comercio:'Tienda Nube, MercadoLibre',desc:'12 cuotas sin interés',tope:'Sin tope',vigencia:'Todo el mes',card:'Mastercard Ualá'},
-    ]
-  },
-  {
-    id:'brubank',name:'Brubank',icon:'🔵',color:'linear-gradient(135deg,#0369a1,#0ea5e9)',
-    promos:[
-      {rubro:'supermercados',comercio:'Carrefour, Jumbo, Vea',desc:'15% off',tope:'$4.000',vigencia:'Miércoles',card:'Visa Brubank'},
-      {rubro:'combustible',comercio:'Shell',desc:'10% off',tope:'$3.000 / mes',vigencia:'Todos los días',card:'Débito Visa Brubank'},
-      {rubro:'delivery',comercio:'PedidosYa',desc:'20% off',tope:'$1.500',vigencia:'lun·mar',card:'Visa Brubank'},
-      {rubro:'viajes',comercio:'Despegar.com',desc:'8% off',tope:'$8.000',vigencia:'Todo el mes',card:'Visa Brubank'},
-    ]
-  },
-  {
-    id:'personalpay',name:'Personal Pay',icon:'📱',color:'linear-gradient(135deg,#701a75,#c026d3)',
-    promos:[
-      {rubro:'supermercados',comercio:'Carrefour, Coto (QR)',desc:'10% off',tope:'$2.000',vigencia:'Todos los días',card:'QR Personal Pay'},
-      {rubro:'delivery',comercio:'PedidosYa, Rappi',desc:'15% off',tope:'$1.200',vigencia:'Todos los días',card:'Personal Pay'},
-      {rubro:'farmacia',comercio:'Farmacity',desc:'10% off',tope:'$1.500',vigencia:'lun·mié·vie',card:'Personal Pay'},
-      {rubro:'combustible',comercio:'YPF',desc:'8% off',tope:'$2.000 / carga',vigencia:'Todos los días',card:'Personal Pay'},
-    ]
-  },
-  {
-    id:'lemon',name:'Lemon Cash',icon:'🍋',color:'linear-gradient(135deg,#365314,#65a30d)',
-    promos:[
-      {rubro:'supermercados',comercio:'Carrefour, Coto (QR)',desc:'5% cashback USDT',tope:'$3.000 / mes',vigencia:'Todos los días',card:'Tarjeta Lemon Visa'},
-      {rubro:'delivery',comercio:'PedidosYa, Rappi',desc:'8% cashback USDT',tope:'$1.000 / mes',vigencia:'Todos los días',card:'Tarjeta Lemon'},
-      {rubro:'farmacia',comercio:'Farmacity, Dr. Ahorro',desc:'5% cashback USDT',tope:'$1.500 / mes',vigencia:'Todos los días',card:'Tarjeta Lemon Visa'},
-    ]
-  },
-];
+// Se llenará desde promos.json dinámicamente o usa fallback.
+let BANKS = [];
 
 /* USER profile — persistent en localStorage */
-let userCards = JSON.parse(localStorage.getItem('cqp_cards') || localStorage.getItem('hp_cards') || '["galicia","naranjax","mercadopago"]');
+// Fix bug: si guardaban vacío (ej: se quitó la última), el fallback "['galicia',...]" no se debe forzar.
+let storedCardsStr = localStorage.getItem('cqp_cards');
+let userCards = storedCardsStr ? JSON.parse(storedCardsStr) : ["galicia","naranjax","mercadopago"];
 
 /* ============================================================
    NAVIGATION
@@ -762,11 +589,6 @@ async function fetchDolar(){
    RENDER: HOME
 ============================================================ */
 function renderHome(dolarData){
-  const mep=dolarData.find(d=>(d.casa||d.nombre||'').toLowerCase().includes('mep'))||dolarData[1];
-  const mepVal=mep?.venta||1325;
-  document.getElementById('rate-mep').textContent='$'+mepVal.toLocaleString('es-AR');
-  document.getElementById('rate-mep').classList.remove('skeleton');
-
   // AI recommendation
   const myBanks=BANKS.filter(b=>userCards.includes(b.id));
   let bestPromo=null;
@@ -788,25 +610,34 @@ function renderHome(dolarData){
     document.getElementById('ai-sub-text').textContent='Cuantas más tarjetas agregues, mejor será la recomendación.';
   }
 
-  // Top promos home feed
+  // Today Promos instead of Top Promos
   const hp=document.getElementById('home-promos');
   hp.innerHTML='';
-  const topPromos=[];
+  let todaysPromos=[];
   BANKS.filter(b=>userCards.includes(b.id)).forEach(b=>{
-    b.promos.slice(0,2).forEach(p=>topPromos.push({...p,bank:b.name,icon:b.icon,color:b.color}));
+    b.promos.forEach(p=>{
+      if (promoEsHoy(p.vigencia)) {
+        todaysPromos.push({...p,bank:b.name,icon:b.icon,color:b.color});
+      }
+    });
   });
-  if(!topPromos.length){
-    hp.innerHTML='<div class="card" style="text-align:center;padding:28px;color:var(--text3)">Activá tarjetas para ver promos 💳</div>';
+  
+  // Sort from biggest discount to lowest
+  todaysPromos.sort((a,b) => parseInt(b.desc) - parseInt(a.desc));
+  
+  if(!todaysPromos.length){
+    hp.innerHTML='<div class="card" style="text-align:center;padding:28px;color:var(--text3)">Hoy no hay promos súper destacadas o te faltan activar tarjetas en el panel. 💳</div>';
     return;
   }
-  topPromos.slice(0,4).forEach(p=>{
+  
+  todaysPromos.forEach(p=>{
     const d=document.createElement('div');
     d.className='promo-pill';
     d.innerHTML=`
       <div class="promo-pill-icon">${p.icon}</div>
       <div class="promo-pill-body">
-        <div class="promo-pill-title">${p.bank} <span class="badge badge-blue">${p.rubro}</span></div>
-        <div class="promo-pill-sub">${p.comercio} · ${p.vigencia} · hasta ${p.tope}</div>
+        <div class="promo-pill-title">${p.comercio} <span class="badge badge-hoy" style="padding:1px 4px;font-size:9px;">HOY</span></div>
+        <div class="promo-pill-sub">${p.bank} · tope ${p.tope}</div>
       </div>
       <div class="promo-pill-pct">${p.desc}</div>
     `;
@@ -1144,17 +975,30 @@ function initMapIfNeeded() {
   }
 }
 
-async function init(){
+async function init() {
   setDate();
+  
+  try {
+    const res = await fetch('promos.json');
+    if (res.ok) {
+      const data = await res.json();
+      if (data.banks && data.banks.length > 0) {
+        BANKS = data.banks;
+        console.log('Promos loaded from promos.json');
+      }
+    }
+  } catch (e) {
+    console.log('Using static BANKS fallback or empty array if fetch fails.');
+  }
+
   renderCards();
   initComparador();
   renderPromos();
 
-  const dolarData=await fetchDolar();
-  window._dolarData=dolarData;
+  const dolarData = await fetchDolar();
+  window._dolarData = dolarData;
   renderHome(dolarData);
   renderSavings(dolarData);
-  renderWeeklyPromos();
 
   // Hide splash screen
   setTimeout(() => {
@@ -1191,174 +1035,6 @@ toggleTheme = function() {
   originalToggleTheme();
   updateThemeMeta(isDark);
 };
-
-/* ============================================================
-   WEEKLY PROMOS CALENDAR
-=========================================================== */
-function renderWeeklyPromos() {
-  const container = document.getElementById('weekly-promos-scroll');
-  if(!container) return;
-  container.innerHTML = '';
-  
-  const dias = [
-    {id:1, name:'Lunes', short:'Lun'},
-    {id:2, name:'Martes', short:'Mar'},
-    {id:3, name:'Miércoles', short:'Mié'},
-    {id:4, name:'Jueves', short:'Jue'},
-    {id:5, name:'Viernes', short:'Vie'},
-    {id:6, name:'Sábado', short:'Sáb'},
-    {id:0, name:'Domingo', short:'Dom'}
-  ];
-  
-  const myBanks = BANKS.filter(b=>userCards.includes(b.id));
-  const hoyId = new Date().getDay();
-  
-  dias.forEach(d => {
-    // Buscar la mejor promo para este dia de las tarjetas activas
-    let best = null;
-    let bestBanco = null;
-    
-    myBanks.forEach(b => {
-      b.promos.forEach(p => {
-        const v = p.vigencia.toLowerCase();
-        // Lógica súper básica de matcheo (en prod usar la función promoEsHoy modificada para aceptar un día específico)
-        const dayMatch = (d.id===1 && v.includes('lun')) || 
-                         (d.id===2 && v.includes('mar')) ||
-                         (d.id===3 && v.includes('mié')) ||
-                         (d.id===4 && v.includes('jue')) ||
-                         (d.id===5 && v.includes('vie')) ||
-                         (d.id===6 && v.includes('sáb')) ||
-                         (d.id===0 && v.includes('dom')) ||
-                         v.includes('todos') || v.includes('todo el mes');
-                         
-        if(dayMatch) {
-          if(!best || parseInt(p.desc) > parseInt(best.desc) || (parseInt(p.desc) === parseInt(best.desc) && p.rubro === 'supermercados')) {
-            best = p;
-            bestBanco = b;
-          }
-        }
-      });
-    });
-    
-    // Crear la tarjeta
-    const isHoy = d.id === hoyId;
-    const el = document.createElement('div');
-    el.className = 'promo-card';
-    el.style.minWidth = '200px';
-    el.style.marginRight = '12px';
-    el.style.flexShrink = '0';
-    if(isHoy) {
-      el.classList.add('green-border');
-    }
-    
-    if(best) {
-      el.innerHTML = `
-        <div style="padding:10px 14px; border-bottom:1px solid var(--glass-border); display:flex; justify-content:space-between; align-items:center;">
-          <div style="font-weight:700; font-size:14px; color:${isHoy? 'var(--green)' : 'var(--text1)'}">${isHoy? '⭐ Hoy' : d.name}</div>
-          <div class="bank-logo" style="width:28px; height:28px; background:${bestBanco.color}; font-size:12px;">${bestBanco.icon}</div>
-        </div>
-        <div style="padding:12px 14px; display:flex; flex-direction:column; gap:4px;">
-          <div style="font-size:22px; font-weight:800; color:var(--green);">${best.desc}</div>
-          <div style="font-size:13px; font-weight:600;">${best.comercio}</div>
-          <div style="font-size:11px; color:var(--text2); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Tope ${best.tope}</div>
-        </div>
-      `;
-    } else {
-      el.innerHTML = `
-        <div style="padding:10px 14px; border-bottom:1px solid var(--glass-border);">
-          <div style="font-weight:700; font-size:14px; color:${isHoy? 'var(--green)' : 'var(--text1)'}">${isHoy? '⭐ Hoy' : d.name}</div>
-        </div>
-        <div style="padding:22px 14px; text-align:center; color:var(--text3); font-size:13px;">
-          Sin promos fuertes
-        </div>
-      `;
-    }
-    container.appendChild(el);
-  });
-}
-
-/* ============================================================
-   PUSH NOTIFICATIONS (MOCK FRONTEND / SERVICE WORKER)
-=========================================================== */
-async function setupPushNotifications() {
-  const btn = document.getElementById('btn-push-setup');
-  
-  if (!('Notification' in window)) {
-    alert('Este navegador no soporta notificaciones de escritorio.');
-    return;
-  }
-  
-  if (Notification.permission === 'granted') {
-    btn.textContent = '✅ Activadas';
-    btn.style.background = 'var(--green)';
-    alert('¡Notificaciones ya estaban activadas! Recibirás los avisos a las 8 AM.');
-    return;
-  }
-  
-  if (Notification.permission !== 'denied') {
-    btn.textContent = 'Solicitando...';
-    const permission = await Notification.requestPermission();
-    if (permission === 'granted') {
-      btn.textContent = '✅ Activadas';
-      btn.style.background = 'var(--green)';
-      // En un entorno real, aca nos subscribimos al pushManager
-      // y mandamos la subscripción al backend:
-      /*
-      const sw = await navigator.serviceWorker.ready;
-      const sub = await sw.pushManager.subscribe({
-        userVisibleOnly: true,
-        applicationServerKey: 'YOUR_PUBLIC_VAPID_KEY'
-      });
-      await fetch('/api/subscribe', { method: 'POST', body: JSON.stringify(sub) });
-      */
-      alert('¡Listo! Te avisaremos cada mañana sobre la mejor promo del día.');
-    } else {
-      btn.textContent = 'Activar 8 AM';
-    }
-  }
-}
-
-function simulatePushNotification() {
-  if (Notification.permission !== 'granted') {
-    alert('Primero debes activar las notificaciones haciendo clic en "Activar 8 AM" y dando permisos en el navegador.');
-    return;
-  }
-  
-  // Buscar una recomendación (igual que en Home)
-  const myBanks = BANKS.filter(b=>userCards.includes(b.id));
-  let bestPromo = null;
-  myBanks.forEach(b => {
-    b.promos.forEach(p => {
-      if(promoEsHoy(p.vigencia) && p.rubro === 'supermercados') {
-        if(!bestPromo || parseInt(p.desc) > parseInt(bestPromo.pct)) {
-          bestPromo = {bank:b.name, icon:b.icon, ...p, pct:parseInt(p.desc)};
-        }
-      }
-    });
-  });
-  
-  const title = bestPromo ? 'Tu Asistente ConQuePago ☀️' : 'ConQuePago - Sin promos fuertes hoy';
-  const body = bestPromo ? 
-    `Hoy usá ${bestPromo.bank} en ${bestPromo.comercio} — ${bestPromo.desc} de ahorro` : 
-    'Hoy no detectamos promos en supermercados con tus tarjetas activas.';
-    
-  // Intentar usar el Service Worker si está activo (permite mostrar on click, etc.)
-  navigator.serviceWorker.getRegistration().then(reg => {
-    if (reg) {
-      reg.showNotification(title, {
-        body: body,
-        icon: '/icon-192.png',
-        badge: '/icon-192.png',
-        vibrate: [100, 50, 100],
-        data: { url: '/' },
-        actions: [{action: 'open', title: 'Ver promos'}]
-      });
-    } else {
-      // Fallback a API de notificación nativa
-      new Notification(title, { body: body, icon: '/icon-192.png' });
-    }
-  });
-}
 
 </script>
 </body>
