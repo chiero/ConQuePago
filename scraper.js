@@ -82,6 +82,18 @@ async function runScraper() {
       promos: [
         {rubro: 'supermercados', comercio: 'Cualquier supermercado', desc: '10% cashback', tope: '$500', vigencia: 'Todos los días', card: 'Tarjeta de Crédito Ualá'}
       ]
+    },
+    {
+      id: 'bbva', name: 'BBVA', icon: '💙', color: 'linear-gradient(135deg,#004481,#043263)',
+      promos: [
+        {rubro: 'supermercados', comercio: 'Supermercado Día', desc: '20% off', tope: '$20.000 / mes', vigencia: 'vie·sáb', card: 'Crédito BBVA (MODO)', nota: 'Mín. $30.000'},
+        {rubro: 'supermercados', comercio: 'Coto', desc: '20% off', tope: '$25.000 / mes', vigencia: 'Martes', card: 'Crédito BBVA (MODO)', nota: 'Mín. $60.000'},
+        {rubro: 'supermercados', comercio: 'Carrefour', desc: '10% off', tope: 'Sin tope', vigencia: 'Sábados', card: 'Crédito BBVA (MODO)'},
+        {rubro: 'supermercados', comercio: 'Jumbo', desc: '20% off', tope: '$25.000 / mes', vigencia: 'mar·jue', card: 'Crédito BBVA (MODO)', nota: 'Mín. $100.000'},
+        {rubro: 'supermercados', comercio: 'Disco, Vea', desc: '20% off', tope: '$25.000 / mes', vigencia: 'vie·sáb·dom', card: 'Crédito BBVA (MODO)', nota: 'Mín. $100.000'},
+        {rubro: 'supermercados', comercio: 'Changomas', desc: '20% off', tope: '$20.000 / mes', vigencia: 'Miércoles', card: 'Crédito BBVA (MODO)', nota: 'Mín. $75.000'},
+        {rubro: 'supermercados', comercio: 'Makro', desc: '20% off', tope: '$20.000 / mes', vigencia: 'Jueves', card: 'Crédito BBVA (MODO)'}
+      ]
     }
   ];
 
