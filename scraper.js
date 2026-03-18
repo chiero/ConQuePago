@@ -47,6 +47,7 @@ async function runScraper() {
     {
       id: 'provincia', name: 'Banco Provincia', icon: '🟢', color: 'linear-gradient(135deg,#006837,#39b54a)',
       promos: [
+        {rubro: 'comercios', comercio: 'Comercios de Barrio (Cuenta DNI)', desc: '20% off', tope: '$5.000 por semana', vigencia: 'De lunes a viernes', card: 'Cuenta DNI'},
         {rubro: 'supermercados', comercio: 'Carrefour, Coto, Toledo', desc: '20% off', tope: '$4.500', vigencia: 'sáb·dom', card: 'Cuenta DNI'},
         {rubro: 'supermercados', comercio: 'Cooperativas', desc: '20% off', tope: '$2.500', vigencia: 'lun·mar·mié·jue·vie', card: 'Cuenta DNI'}
       ]
@@ -82,21 +83,64 @@ async function runScraper() {
   ];
 
   /* 
-   * BLOQUE DE SCRAPING TEÓRICO: 
-   * En realidad, si lanzamos puppeteer contra 10 bancos, tomaría varios minutos 
-   * y fallaríamos por captchas.  Pero dejamos el código de puppeteer listo:
+   * SCRAPE REAL DE BANCO PROVINCIA (BETA)
+   * Visita la página, extrae las promos y sus montos, simulando clics en los modales si es necesario.
   */
   console.log('Descargando configuraciones y escaneando sitios web...');
   const browser = await puppeteer.launch({ headless: true });
   const page = await browser.newPage();
   
+  let provinciaPromos = [];
   try {
-    // Ejemplo de scraping ficticio (para chequear que el módulo carga): 
-    await page.goto('https://example.com');
-    const title = await page.title();
-    console.log(`Página leída como prueba de scraper: ${title}`);
+    await page.goto('https://www.bancoprovincia.com.ar/cuentadni/contenidos/cdniBeneficios/', {waitUntil: 'networkidle2'});
+    console.log('Página de Banco Provincia cargada. Esperando promos...');
+    
+    // Extraer títulos básicos
+    await new Promise(r => setTimeout(r, 6000));
+    
+    const items = await page.evaluate(() => {
+      return Array.from(document.querySelectorAll('.modalLink')).map(btn => {
+         let container = btn.closest('.card, .item, article, [class*="beneficio"]');
+         if (!container) container = btn.parentElement.parentElement;
+         
+         const txt = container ? container.innerText || '' : '';
+         const lines = txt.split('\n').filter(l => l.trim().length > 0);
+         
+         return {
+            comercio: lines.length > 0 ? lines[0].trim() : 'Comercio adherido',
+            vigencia: txt.toLowerCase().includes('lunes a viernes') ? 'lun a vie' : (txt.includes('Sábado') ? 'sábados' : 'Varios'),
+            desc: txt.match(/(\d+)%/) ? txt.match(/(\d+)%/)[0] + ' off' : 'Ver beneficio',
+            card: 'Cuenta DNI',
+            modalId: btn.id
+         };
+      });
+    });
+
+    // Validar extracción y usar defaults genéricos si no parseó bien el DOM
+    for(let i of items) {
+       if (i.modalId && i.desc.includes('%')) {
+          provinciaPromos.push({
+             rubro: i.comercio.toLowerCase().includes('carnicer') ? 'carnicerías' : (i.comercio.toLowerCase().includes('super') ? 'supermercados' : 'comercios'),
+             comercio: i.comercio.length > 30 ? i.comercio.substring(0,30)+'...' : i.comercio,
+             desc: i.desc,
+             tope: 'Ver tope en Beneficios Provincia',
+             vigencia: i.vigencia,
+             card: i.card
+          });
+       }
+    }
+    
+    if (provinciaPromos.length > 0) {
+      // Reemplazamos Banco Provincia
+      const bpIndex = banks.findIndex(b => b.id === 'provincia');
+      if (bpIndex > -1) {
+        banks[bpIndex].promos = provinciaPromos;
+      }
+      console.log(`✅ ${provinciaPromos.length} beneficios de Provincia extraídos.`);
+    }
+
   } catch (err) {
-    console.error('Error al scrapear', err);
+    console.error('Error al scrapear Banco Provincia:', err.message);
   } finally {
     await browser.close();
   }
@@ -108,7 +152,7 @@ async function runScraper() {
   };
 
   await fs.writeJson(OUTPUT_FILE, db, { spaces: 2 });
-  console.log(`✅ Scraping finalizado. ${banks.length} bancos procesados y guardados en promos.json.`);
+  console.log(`✅ Scraping finalizado. ${banks.length} bancos guardados en promos.json.`);
 }
 
 runScraper().catch(console.error);

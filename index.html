@@ -375,29 +375,7 @@ body{font-family:var(--font);background:var(--bg0);color:var(--text1);min-height
     <div class="ai-tags" id="ai-tags"></div>
   </div>
 
-  <div class="section-label">📊 Indicadores clave de hoy</div>
-  <div class="rates-grid" id="rates-grid">
-    <div class="rate-item">
-      <div class="rate-icon">💵</div>
-      <div class="rate-val skeleton" id="rate-mep" style="height:24px;width:70%"></div>
-      <div class="rate-label">Dólar MEP</div>
-      <div class="rate-change flat" id="rate-mep-chg">—</div>
-    </div>
-    <div class="rate-item">
-      <div class="rate-icon">📈</div>
-      <div class="rate-val" id="rate-inflation">72%</div>
-      <div class="rate-label">Inflación anual</div>
-      <div class="rate-change up" id="rate-inf-chg">↑ estimada</div>
-    </div>
-    <div class="rate-item">
-      <div class="rate-icon">🏦</div>
-      <div class="rate-val" id="rate-pf">63%</div>
-      <div class="rate-label">PF anual</div>
-      <div class="rate-change down" id="rate-pf-chg">↓ real neg.</div>
-    </div>
-  </div>
-
-  <div class="section-label">🔥 Top promos para vos hoy</div>
+  <div class="section-label">🔥 Tus Beneficios de Hoy</div>
   <div id="home-promos"></div>
 
 
@@ -514,13 +492,21 @@ body{font-family:var(--font);background:var(--bg0);color:var(--text1);min-height
 // Fuentes: carrefour.com.ar/descuentos-bancarios, naranjax.com/beneficios
 
 /* Detecta si una promo es válida HOY (lun=1..dom=0) */
-/* Detecta si una promo es válida HOY (lun=1..dom=0) */
 function promoEsHoy(vigencia){
   if(!vigencia) return false;
-  const v=vigencia.toLowerCase();
-  if(v.includes('todos')||v.includes('todo el mes')) return true;
+  let v=vigencia.toLowerCase();
+  if(v.includes('todos')||v.includes('todo el mes')||v.includes('diariamente')) return true;
+
+  // Expandir rangos comunes para que el chequeo por 'includes' detecte los días intermedios
+  v = v.replace(/lunes a viernes/g, 'lunes martes miercoles jueves viernes');
+  v = v.replace(/lun a vie/g, 'lun mar mie jue vie');
+  v = v.replace(/lunes a jueves/g, 'lunes martes miercoles jueves');
+  v = v.replace(/jueves a domingo/g, 'jueves viernes sabado domingo');
+  v = v.replace(/jue a dom/g, 'jue vie sab dom');
+  v = v.replace(/de lunes a viernes/g, 'lunes martes miercoles jueves viernes');
+
   const hoy=new Date().getDay(); // 0=dom,1=lun,2=mar,3=mié,4=jue,5=vie,6=sáb
-  const mapa={lun:1,mar:2,'mié':3,jue:4,vie:5,'sáb':6,dom:0,lunes:1,martes:2,'miércoles':3,jueves:4,viernes:5,'sábado':6,domingo:0};
+  const mapa={lun:1,mar:2,'mié':3,mie:3,jue:4,vie:5,'sáb':6,sab:6,dom:0,lunes:1,martes:2,'miércoles':3,miercoles:3,jueves:4,viernes:5,'sábado':6,sabado:6,domingo:0};
   for(const [k,v2] of Object.entries(mapa)){
     if(v.includes(k)&&hoy===v2) return true;
   }
@@ -528,7 +514,43 @@ function promoEsHoy(vigencia){
 }
 
 // Se llenará desde promos.json dinámicamente o usa fallback.
-let BANKS = [];
+let BANKS = [
+  {
+    id:'galicia',name:'Banco Galicia',icon:'🏛️',color:'linear-gradient(135deg,#1e3a8a,#3b82f6)',
+    promos:[
+      {rubro:'supermercados',comercio:'Carrefour (Hiper, Market)',desc:'3 cuotas sin interés',tope:'Sin tope',vigencia:'jue·vie·sáb·dom',card:'Crédito Visa',nota:'Excluye Electro y Bazar'},
+      {rubro:'combustible',comercio:'YPF (con Modo Galicia)',desc:'15% off',tope:'$5.000 / mes',vigencia:'Todos los días',card:'Crédito Galicia'},
+      {rubro:'delivery',comercio:'PedidosYa',desc:'30% off',tope:'$2.000 / cupón',vigencia:'mar·jue',card:'Mastercard Crédito'}
+    ]
+  },
+  {
+    id:'naranjax',name:'Naranja X',icon:'🍊',color:'linear-gradient(135deg,#ea580c,#f97316)',
+    promos:[
+      {rubro:'supermercados',comercio:'Carrefour',desc:'25% off',tope:'$12.000 / semana',vigencia:'Martes',card:'Naranja X (plan suscripción)'},
+      {rubro:'delivery',comercio:'Rappi, PedidosYa',desc:'10% off',tope:'$1.500',vigencia:'Todos los días',card:'Naranja X'},
+    ]
+  },
+  {
+    id:'mercadopago',name:'Mercado Pago',icon:'💛',color:'linear-gradient(135deg,#009EE3,#00B2E3)',
+    promos:[
+      {rubro:'supermercados',comercio:'Carrefour (online)',desc:'20% off',tope:'$15.000',vigencia:'Lunes',card:'Dinero en cuenta MP'},
+      {rubro:'supermercados',comercio:'Changomas, Punto Mayorista',desc:'10% off',tope:'$2.000',vigencia:'Todos los días',card:'QR Mercado Pago'},
+    ]
+  },
+  {
+    id:'modo',name:'MODO',icon:'⚡',color:'linear-gradient(135deg,#7c3aed,#a855f7)',
+    promos:[
+      {rubro:'supermercados',comercio:'Carrefour',desc:'10% off QR',tope:'Sin tope',vigencia:'Sábados',card:'QR MODO',nota:'Excluye Electro'},
+      {rubro:'combustible',comercio:'Shell',desc:'12% off',tope:'Sin tope',vigencia:'Todo el mes',card:'QR MODO'},
+    ]
+  },
+  {
+    id:'provincia',name:'Banco Provincia',icon:'🟢',color:'linear-gradient(135deg,#006837,#39b54a)',
+    promos:[
+      {rubro: 'comercios', comercio: 'Comercios de Barrio (Cuenta DNI)', desc: '20% off', tope: '$5.000 por semana', vigencia: 'De lunes a viernes', card: 'Cuenta DNI'}
+    ]
+  }
+];
 
 /* USER profile — persistent en localStorage */
 // Fix bug: si guardaban vacío (ej: se quitó la última), el fallback "['galicia',...]" no se debe forzar.
@@ -593,6 +615,7 @@ function renderHome(dolarData){
   const myBanks=BANKS.filter(b=>userCards.includes(b.id));
   let bestPromo=null;
   for(const b of myBanks){
+    if (!b.promos) continue;
     const sup=b.promos.find(p=>p.rubro==='supermercados');
     if(sup&&(!bestPromo||parseInt(sup.desc)>parseInt(bestPromo.pct))){
       bestPromo={bank:b.name,icon:b.icon,...sup,pct:parseInt(sup.desc)};
@@ -606,8 +629,14 @@ function renderHome(dolarData){
       `<span class="badge badge-blue">${bestPromo.card}</span>`+
       `<span class="badge badge-amber">⏱ Hoy</span>`;
   }else{
-    document.getElementById('ai-main-text').innerHTML='Activá tus tarjetas en <em>Mis Tarjetas</em> para ver recomendaciones personalizadas';
-    document.getElementById('ai-sub-text').textContent='Cuantas más tarjetas agregues, mejor será la recomendación.';
+    const hasCards = userCards.length > 0;
+    if(hasCards) {
+      document.getElementById('ai-main-text').innerHTML='Revisá tus beneficios de hoy deslizando hacia abajo.';
+      document.getElementById('ai-sub-text').textContent='Agregamos toda la info para que estires tus ahorros.';
+    } else {
+      document.getElementById('ai-main-text').innerHTML='Activá tus tarjetas en <em>Mis Tarjetas</em> para ver recomendaciones personalizadas';
+      document.getElementById('ai-sub-text').textContent='Cuantas más tarjetas agregues, mejor será la recomendación.';
+    }
   }
 
   // Today Promos instead of Top Promos
@@ -615,11 +644,13 @@ function renderHome(dolarData){
   hp.innerHTML='';
   let todaysPromos=[];
   BANKS.filter(b=>userCards.includes(b.id)).forEach(b=>{
-    b.promos.forEach(p=>{
-      if (promoEsHoy(p.vigencia)) {
-        todaysPromos.push({...p,bank:b.name,icon:b.icon,color:b.color});
-      }
-    });
+    if(b.promos) {
+      b.promos.forEach(p=>{
+        if (promoEsHoy(p.vigencia)) {
+          todaysPromos.push({...p,bank:b.name,icon:b.icon,color:b.color});
+        }
+      });
+    }
   });
   
   // Sort from biggest discount to lowest
@@ -659,6 +690,7 @@ function renderPromos(rubro='todos'){
   let promasHoyCount=0;
 
   BANKS.forEach(bank=>{
+    if(!bank.promos) return;
     let promos=bank.promos.filter(p=>rubro==='todos'||p.rubro===rubro);
     if(!promos.length) return;
     // Ordenar: primero las que son hoy
@@ -986,9 +1018,11 @@ async function init() {
         BANKS = data.banks;
         console.log('Promos loaded from promos.json');
       }
+    } else {
+      console.error('Fetch to promos.json was not ok. Status:', res.status);
     }
   } catch (e) {
-    console.log('Using static BANKS fallback or empty array if fetch fails.');
+    console.error('Error fetching promos.json. Using static BANKS fallback.', e);
   }
 
   renderCards();
