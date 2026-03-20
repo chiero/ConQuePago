@@ -15,6 +15,12 @@ async function runScraper() {
   // Array de bancos extendido y actualizado con datos reales a Marzo 2026
   const banks = [
     {
+      id: 'ciudad', name: 'Banco Ciudad', icon: '🏙️', color: 'linear-gradient(135deg,#155e75,#0891b2)',
+      promos: [
+        {rubro: 'supermercados', comercio: 'Supermercado Día', desc: '20% off', tope: '$20.000 / mes', vigencia: 'Lunes', card: 'MODO (Banco Ciudad)', nota: 'Mín. compra $20.000'}
+      ]
+    },
+    {
       id: 'galicia', name: 'Banco Galicia', icon: '🏛️', color: 'linear-gradient(135deg,#1e3a8a,#3b82f6)',
       promos: [
         {rubro: 'supermercados', comercio: 'Carrefour, Jumbo, Disco, Vea', desc: '25% off', tope: '$10.000 / semana', vigencia: 'Miércoles', card: 'MODO (App Galicia)', nota: 'Reintegro en cuenta'},
@@ -37,12 +43,14 @@ async function runScraper() {
         {rubro: 'supermercados', comercio: 'Supermercado Día', desc: '10% off', tope: 'Sin tope', vigencia: 'Miércoles', card: 'QR Mercado Pago', nota: 'Aplica dinero en cuenta'},
         {rubro: 'supermercados', comercio: 'Carrefour Online', desc: '20% off', tope: '$15.000', vigencia: 'Lunes', card: 'Dinero en cuenta', nota: 'Solo App/Web'},
         {rubro: 'supermercados', comercio: 'Changomas', desc: '10% off', tope: '$2.000', vigencia: 'Todos los días', card: 'QR Mercado Pago'},
+        {rubro: 'comercios', comercio: '3 Cuotas Sin Interés', desc: 'Cuotas', tope: 'Mínimo $50.000', vigencia: 'Todos los días', card: 'Crédito Mercado Pago', nota: 'Aplica en Supermercado Día'},
         {rubro: 'farmacia', comercio: 'Farmacity', desc: '15% off', tope: '$2.500', vigencia: 'lun a vie', card: 'QR Mercado Pago'}
       ]
     },
     {
       id: 'modo', name: 'MODO', icon: '⚡', color: 'linear-gradient(135deg,#7c3aed,#a855f7)',
       promos: [
+        {rubro: 'supermercados', comercio: 'Supermercado Día', desc: '20% off', tope: '$20.000 / mes', vigencia: 'vie·sáb', card: 'QR MODO', nota: 'Mín. compra $30.000'},
         {rubro: 'supermercados', comercio: 'Carrefour, ChangoMás', desc: '10% off QR', tope: '$10.000 / mes', vigencia: 'Sábados', card: 'App MODO'},
         {rubro: 'combustible', comercio: 'Shell', desc: '12% off', tope: '$3.000', vigencia: 'Todos los días', card: 'QR MODO'}
       ]
@@ -61,6 +69,13 @@ async function runScraper() {
         {rubro: 'supermercados', comercio: 'Supermercado Día', desc: '5% off', tope: '$5.000 / semana', vigencia: 'Todos los días', card: 'MODO BNA+', nota: 'Exclusivo Tienda Física'},
         {rubro: 'supermercados', comercio: 'Carrefour, Coto, ChangoMás', desc: '30% off', tope: '$12.000 / semana', vigencia: 'Miércoles', card: 'MODO BNA+'},
         {rubro: 'combustible', comercio: 'YPF', desc: '10% off', tope: '$3.000', vigencia: 'Todos los días', card: 'MODO BNA+'}
+      ]
+    },
+    {
+      id: 'personalpay', name: 'Personal Pay', icon: '📱', color: 'linear-gradient(135deg,#701a75,#c026d3)',
+      promos: [
+        {rubro: 'supermercados', comercio: 'Supermercado Día', desc: '20% off', tope: '$20.000 / día', vigencia: 'Jueves', card: 'Personal Pay (Nivel 3)', nota: 'Mínimo ticket $25.000'},
+        {rubro: 'combustible', comercio: 'Shell', desc: '20% off', tope: '$2.000', vigencia: 'Todos los días', card: 'Visa Personal Pay'}
       ]
     },
     {

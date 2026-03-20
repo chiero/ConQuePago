@@ -544,6 +544,7 @@ let BANKS = [
   {
     id: 'modo', name: 'MODO', icon: '⚡', color: 'linear-gradient(135deg,#7c3aed,#a855f7)',
     promos: [
+      {rubro: 'supermercados', comercio: 'Supermercado Día', desc: '20% off', tope: '$20.000 / mes', vigencia: 'vie·sáb', card: 'QR MODO', nota: 'Mín. compra $30.000'},
       {rubro: 'supermercados', comercio: 'Carrefour, ChangoMás', desc: '10% off QR', tope: '$10.000 / mes', vigencia: 'Sábados', card: 'App MODO'},
       {rubro: 'combustible', comercio: 'Shell', desc: '12% off', tope: '$3.000', vigencia: 'Todos los días', card: 'QR MODO'}
     ]
@@ -574,6 +575,19 @@ let BANKS = [
       {rubro: 'supermercados', comercio: 'Disco, Vea', desc: '20% off', tope: '$25.000 / mes', vigencia: 'vie·sáb·dom', card: 'Crédito BBVA (MODO)', nota: 'Mín. $100.000'},
       {rubro: 'supermercados', comercio: 'Changomas', desc: '20% off', tope: '$20.000 / mes', vigencia: 'Miércoles', card: 'Crédito BBVA (MODO)', nota: 'Mín. $75.000'},
       {rubro: 'supermercados', comercio: 'Makro', desc: '20% off', tope: '$20.000 / mes', vigencia: 'Jueves', card: 'Crédito BBVA (MODO)'}
+    ]
+  },
+  {
+    id: 'personalpay', name: 'Personal Pay', icon: '📱', color: 'linear-gradient(135deg,#701a75,#c026d3)',
+    promos: [
+      {rubro: 'supermercados', comercio: 'Supermercado Día', desc: '20% off', tope: '$20.000 / día', vigencia: 'Jueves', card: 'Personal Pay (Nivel 3)', nota: 'Mín. $25.000'},
+      {rubro: 'combustible', comercio: 'Shell', desc: '20% off', tope: '$2.000', vigencia: 'Todos los días', card: 'Visa Personal Pay'}
+    ]
+  },
+  {
+    id: 'ciudad', name: 'Banco Ciudad', icon: '🏙️', color: 'linear-gradient(135deg,#155e75,#0891b2)',
+    promos: [
+      {rubro: 'supermercados', comercio: 'Supermercado Día', desc: '20% off', tope: '$20.000 / mes', vigencia: 'Lunes', card: 'MODO (Banco Ciudad)', nota: 'Mín. $20.000'}
     ]
   }
 ];
@@ -888,13 +902,15 @@ const COMPARE_DB={
     {name:'Mercado Pago QR',detail:'15% off · Tope $2.500 · lun a vie',pct:'-15%',color:'var(--green)',badge:''},
   ],
   'dia':[
-    {name:'BBVA (MODO)',detail:'20% off · Tope $20.000/mes · Vie/Sáb',pct:'-20%',color:'var(--green)',badge:'FIN DE SEMANA'},
-    {name:'Mercado Pago QR',detail:'10% off · Sin tope · Miércoles (Dinero en cuenta)',pct:'-10%',color:'var(--green)',badge:'MIÉRCOLES'},
-    {name:'Naranja X',detail:'25% off · Tope $12.000/cuenta · Todos los Martes',pct:'-25%',color:'var(--green)',badge:'MARTES'},
-    {name:'Banco Provincia (Cta DNI)',detail:'20% off · Tope $8.000 · Todos los Lunes',pct:'-20%',color:'var(--green)',badge:'LUNES'},
-    {name:'Banco Ciudad (MODO)',detail:'20% off · Tope $20.000/mes · Todos los Lunes',pct:'-20%',color:'var(--green)',badge:'LUNES'},
-    {name:'Prex (Online)',detail:'25% off · Tope $10.000/mes · Todos los Martes',pct:'-25%',color:'var(--green)',badge:'MARTES'},
-    {name:'MODO (Varios Bancos)',detail:'20% off · Tope $20.000/mes · Vie/Sáb',pct:'-20%',color:'var(--accent)',badge:'FIN DE SEMANA'},
+    {name:'MODO (Varios Bancos)',detail:'20% off · Tope $20k/mes · Vie/Sáb · Mín. $30.000',pct:'-20%',color:'var(--green)',badge:'VIE/SÁB'},
+    {name:'Personal Pay',detail:'20% off · Tope $20k/día · Jueves · Nivel 3',pct:'-20%',color:'var(--green)',badge:'JUEVES'},
+    {name:'Banco Ciudad (MODO)',detail:'20% off · Tope $20k/mes · Lunes · Mín. $20k',pct:'-20%',color:'var(--green)',badge:'LUNES'},
+    {name:'Banco Columbia',detail:'20% off · Tope $9k · Lunes',pct:'-20%',color:'var(--green)',badge:'LUNES'},
+    {name:'Provincia (Cta DNI)',detail:'20% off · Tope $8k · Lunes · Mín. $25k',pct:'-20%',color:'var(--green)',badge:'LUNES'},
+    {name:'Naranja X',detail:'25% off · Tope $12k · Martes',pct:'-25%',color:'var(--green)',badge:'MARTES'},
+    {name:'Prex (Online)',detail:'25% off · Tope $10k · Martes',pct:'-25%',color:'var(--green)',badge:'MARTES'},
+    {name:'Banco del Sol (MODO)',detail:'25% off · Tope $10k · Martes',pct:'-25%',color:'var(--green)',badge:'MARTES'},
+    {name:'Mercado Pago QR',detail:'10% off · Sin tope · Miércoles (Dinero en cuenta)',pct:'-10%',color:'var(--accent)',badge:'MIÉRCOLES'},
     {name:'Banco Nación (BNA+)',detail:'5% off · Tope $5.000/semana · Todos los días',pct:'-5%',color:'var(--accent)',badge:''},
   ],
   'coto':[

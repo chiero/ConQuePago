@@ -1,6 +1,23 @@
 {
-  "updatedAsOf": "2026-03-18T15:50:44.915Z",
+  "updatedAsOf": "2026-03-20T17:40:12.558Z",
   "banks": [
+    {
+      "id": "ciudad",
+      "name": "Banco Ciudad",
+      "icon": "🏙️",
+      "color": "linear-gradient(135deg,#155e75,#0891b2)",
+      "promos": [
+        {
+          "rubro": "supermercados",
+          "comercio": "Supermercado Día",
+          "desc": "20% off",
+          "tope": "$20.000 / mes",
+          "vigencia": "Lunes",
+          "card": "MODO (Banco Ciudad)",
+          "nota": "Mín. compra $20.000"
+        }
+      ]
+    },
     {
       "id": "galicia",
       "name": "Banco Galicia",
@@ -109,6 +126,15 @@
           "card": "QR Mercado Pago"
         },
         {
+          "rubro": "comercios",
+          "comercio": "3 Cuotas Sin Interés",
+          "desc": "Cuotas",
+          "tope": "Mínimo $50.000",
+          "vigencia": "Todos los días",
+          "card": "Crédito Mercado Pago",
+          "nota": "Aplica en Supermercado Día"
+        },
+        {
           "rubro": "farmacia",
           "comercio": "Farmacity",
           "desc": "15% off",
@@ -124,6 +150,15 @@
       "icon": "⚡",
       "color": "linear-gradient(135deg,#7c3aed,#a855f7)",
       "promos": [
+        {
+          "rubro": "supermercados",
+          "comercio": "Supermercado Día",
+          "desc": "20% off",
+          "tope": "$20.000 / mes",
+          "vigencia": "vie·sáb",
+          "card": "QR MODO",
+          "nota": "Mín. compra $30.000"
+        },
         {
           "rubro": "supermercados",
           "comercio": "Carrefour, ChangoMás",
@@ -205,6 +240,31 @@
           "tope": "$3.000",
           "vigencia": "Todos los días",
           "card": "MODO BNA+"
+        }
+      ]
+    },
+    {
+      "id": "personalpay",
+      "name": "Personal Pay",
+      "icon": "📱",
+      "color": "linear-gradient(135deg,#701a75,#c026d3)",
+      "promos": [
+        {
+          "rubro": "supermercados",
+          "comercio": "Supermercado Día",
+          "desc": "20% off",
+          "tope": "$20.000 / día",
+          "vigencia": "Jueves",
+          "card": "Personal Pay (Nivel 3)",
+          "nota": "Mínimo ticket $25.000"
+        },
+        {
+          "rubro": "combustible",
+          "comercio": "Shell",
+          "desc": "20% off",
+          "tope": "$2.000",
+          "vigencia": "Todos los días",
+          "card": "Visa Personal Pay"
         }
       ]
     },
