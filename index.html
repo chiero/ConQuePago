@@ -1073,43 +1073,126 @@ function initMapIfNeeded() {
 }
 
 /* ============================================================
-   NOTIFICATIONS
+   NOTIFICATIONS (Web Push + Local Fallback)
 ============================================================ */
+const VAPID_PUBLIC_KEY = 'BLGSxbxX6PrUSnW3MixOqK8VCgGPoI_ZPlikqVpmZQ9IyuSEDBh6tLaB5kqtym_c-wyQbLYqX2aPh4GpRksZWH0';
+
 async function setupNotifications() {
-  if (!('Notification' in window)) {
-    alert('Tu navegador no soporta notificaciones.');
+  if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
+    alert('Tu navegador no soporta notificaciones push.');
     return;
   }
-  
-  const permission = await Notification.requestPermission();
-  if (permission === 'granted') {
+
+  try {
+    const permiso = await Notification.requestPermission();
+    if (permiso !== 'granted') {
+      alert('Necesitamos permiso para avisarte de las promos.');
+      return;
+    }
+
+    const reg = await navigator.serviceWorker.ready;
+    
+    // Suscribir al servidor de push (Estructura lista para backend)
+    const subscription = await reg.pushManager.subscribe({
+      userVisibleOnly: true,
+      applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
+    });
+
+    console.log('Push Subscription:', JSON.stringify(subscription));
+    localStorage.setItem('yasta_push_sub', JSON.stringify(subscription));
+
     updateNotifyUI(true);
-    showTestNotification();
-  } else {
-    alert('Permiso denegado. Podés activarlo en la configuración del sitio.');
+    programarNotificacionLocal();
+    
+    // Notificación de bienvenida inmediata
+    reg.showNotification('¡Yastá activa!', {
+      body: 'Te avisaremos cada mañana a las 8:00 AM qué tarjeta te conviene usar.',
+      icon: './icon-192.png',
+      badge: './icon-192.png',
+      tag: 'yasta-welcome',
+      data: { url: './index.html' }
+    });
+
+    mostrarToast('✅ Alertas activadas (8:00 AM)');
+
+  } catch (error) {
+    console.error('Error suscribiendo a notificaciones:', error);
+    alert('Hubo un error al activar las alertas.');
   }
 }
 
 function updateNotifyUI(active) {
   const btn = document.getElementById('btn-notify');
-  if (active) {
-    btn.textContent = 'Activa';
-    btn.style.background = 'var(--green)';
-    btn.onclick = null;
+  if (btn) {
+    if (active) {
+      btn.textContent = 'Activo';
+      btn.style.background = 'var(--green)';
+      btn.onclick = null;
+    } else {
+      btn.textContent = 'Activar';
+      btn.style.background = 'var(--accent)';
+    }
   }
 }
 
-function showTestNotification() {
-  if (navigator.serviceWorker.controller) {
-    navigator.serviceWorker.ready.then(registration => {
-      registration.showNotification('¡Yastá activa!', {
-        body: 'Cada mañana te avisaremos qué tarjeta usar.',
-        icon: './icon-192.png',
-        badge: './icon-192.png',
-        tag: 'yasta-welcome'
-      });
+function programarNotificacionLocal() {
+  const ahora = new Date();
+  const manana8am = new Date();
+  manana8am.setDate(ahora.getDate() + 1);
+  manana8am.setHours(8, 0, 0, 0);
+  
+  const msHasta8am = manana8am - ahora;
+  
+  setTimeout(() => {
+    mostrarNotificacionDiaria();
+    setInterval(mostrarNotificacionDiaria, 24 * 60 * 60 * 1000);
+  }, msHasta8am);
+}
+
+async function mostrarNotificacionDiaria() {
+  const reg = await navigator.serviceWorker.ready;
+  const promo = obtenerMejorPromoHoy();
+  
+  reg.showNotification('Yastá — Promo del día', {
+    body: promo,
+    icon: './icon-192.png',
+    badge: './icon-192.png',
+    tag: 'promo-diaria',
+    renotify: true,
+    data: { url: './index.html' }
+  });
+}
+
+function obtenerMejorPromoHoy() {
+  const dias = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+  const hoy = dias[new Date().getDay()];
+  
+  // Buscar en el fallback local o cargado
+  let mejor = '';
+  BANKS.forEach(b => {
+    b.promos.forEach(p => {
+      if (p.vigencia.includes(hoy) || p.vigencia.toLowerCase().includes('todos los días')) {
+        if (!mejor) mejor = `${b.name}: ${p.desc} en ${p.comercio}`;
+      }
     });
-  }
+  });
+
+  return mejor || 'Chequeá las promos de hoy en Yastá';
+}
+
+function urlBase64ToUint8Array(base64String) {
+  const padding = '='.repeat((4 - base64String.length % 4) % 4);
+  const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+  const rawData = window.atob(base64);
+  return Uint8Array.from([...rawData].map(c => c.charCodeAt(0)));
+}
+
+function mostrarToast(msg) {
+  const t = document.createElement('div');
+  t.style.cssText = `position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:#1f2937;color:white;padding:12px 24px;border-radius:30px;font-size:13px;z-index:9999;box-shadow:0 4px 15px rgba(0,0,0,0.4);animation:fadeIn 0.3s ease;`;
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => { t.style.opacity='0'; setTimeout(()=>t.remove(),300); }, 3000);
 }
 
 async function init() {

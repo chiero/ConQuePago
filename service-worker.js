@@ -71,9 +71,55 @@ self.addEventListener('activate', event => {
   );
 });
 
-self.addEventListener('notificationclick', event => {
-  event.notification.close();
+// Recibe el push del servidor
+self.addEventListener('push', function(event) {
+  let data = {};
+  try {
+    data = event.data ? event.data.json() : {};
+  } catch(e) {
+    data = { title: 'Yastá', body: event.data.text() };
+  }
+  
+  const title = data.title || 'Yastá';
+  const options = {
+    body: data.body || 'Chequeá las promos de hoy',
+    icon: './icon-192.png',
+    badge: './icon-192.png',
+    vibrate: [100, 50, 100],
+    data: { url: data.url || './index.html' },
+    actions: [
+      { action: 'ver', title: 'Ver promo' },
+      { action: 'cerrar', title: 'Cerrar' }
+    ]
+  };
+
   event.waitUntil(
-    clients.openWindow('./index.html')
+    self.registration.showNotification(title, options)
+  );
+});
+
+// Usuario toca la notificación
+self.addEventListener('notificationclick', function(event) {
+  event.notification.close();
+  
+  if (event.action === 'cerrar') return;
+
+  const urlToOpen = event.notification.data.url || './index.html';
+
+  event.waitUntil(
+    clients.matchAll({
+      type: 'window',
+      includeUncontrolled: true
+    }).then(function(clientList) {
+      for (let i = 0; i < clientList.length; i++) {
+        let client = clientList[i];
+        if (client.url.indexOf(urlToOpen) !== -1 && 'focus' in client) {
+          return client.focus();
+        }
+      }
+      if (clients.openWindow) {
+        return clients.openWindow(urlToOpen);
+      }
+    })
   );
 });
