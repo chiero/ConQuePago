@@ -1,5 +1,5 @@
 {
-  "updatedAsOf": "2026-03-21T18:45:52.309Z",
+  "updatedAsOf": "2026-03-22T00:02:19.688Z",
   "banks": [
     {
       "id": "ciudad",
@@ -22,7 +22,7 @@
       "id": "galicia",
       "name": "Banco Galicia",
       "icon": "🏛️",
-      "color": "linear-gradient(135deg,#1e3a8a,#3b82f6)",
+      "color": "linear-gradient(135deg,#FA6400,#ff8c42)",
       "promos": [
         {
           "rubro": "supermercados",
@@ -55,7 +55,7 @@
       "id": "naranjax",
       "name": "Naranja X",
       "icon": "🍊",
-      "color": "linear-gradient(135deg,#ea580c,#f97316)",
+      "color": "linear-gradient(135deg,#F75000,#ff7a33)",
       "promos": [
         {
           "rubro": "supermercados",
@@ -97,7 +97,7 @@
       "id": "mercadopago",
       "name": "Mercado Pago",
       "icon": "💛",
-      "color": "linear-gradient(135deg,#009EE3,#00B2E3)",
+      "color": "linear-gradient(135deg,#FFF059,#ffdf00)",
       "promos": [
         {
           "rubro": "supermercados",
@@ -181,7 +181,7 @@
       "id": "provincia",
       "name": "Banco Provincia",
       "icon": "🟢",
-      "color": "linear-gradient(135deg,#006837,#39b54a)",
+      "color": "linear-gradient(135deg,#279D2E,#34d399)",
       "promos": [
         {
           "rubro": "comercios",
@@ -214,7 +214,7 @@
       "id": "nacion",
       "name": "Banco Nación",
       "icon": "🇦🇷",
-      "color": "linear-gradient(135deg,#0054a6,#0072c6)",
+      "color": "linear-gradient(135deg,#0E7391,#14b8a6)",
       "promos": [
         {
           "rubro": "supermercados",
@@ -272,7 +272,7 @@
       "id": "santander",
       "name": "Santander",
       "icon": "🔴",
-      "color": "linear-gradient(135deg,#8b0000,#cc0000)",
+      "color": "linear-gradient(135deg,#EC0000,#ff4d4d)",
       "promos": [
         {
           "rubro": "combustible",
@@ -296,7 +296,7 @@
       "id": "macro",
       "name": "Banco Macro",
       "icon": "🟠",
-      "color": "linear-gradient(135deg,#c2410c,#f97316)",
+      "color": "linear-gradient(135deg,#004481,#1e40af)",
       "promos": [
         {
           "rubro": "supermercados",
@@ -336,7 +336,7 @@
       "id": "bbva",
       "name": "BBVA",
       "icon": "💙",
-      "color": "linear-gradient(135deg,#004481,#043263)",
+      "color": "linear-gradient(135deg,#14549C,#2563eb)",
       "promos": [
         {
           "rubro": "supermercados",

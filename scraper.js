@@ -21,7 +21,7 @@ async function runScraper() {
       ]
     },
     {
-      id: 'galicia', name: 'Banco Galicia', icon: '🏛️', color: 'linear-gradient(135deg,#1e3a8a,#3b82f6)',
+      id: 'galicia', name: 'Banco Galicia', icon: '🏛️', color: 'linear-gradient(135deg,#FA6400,#ff8c42)',
       promos: [
         {rubro: 'supermercados', comercio: 'Carrefour, Jumbo, Disco, Vea', desc: '25% off', tope: '$10.000 / semana', vigencia: 'Miércoles', card: 'MODO (App Galicia)', nota: 'Reintegro en cuenta'},
         {rubro: 'combustible', comercio: 'YPF', desc: '15% off', tope: '$5.000 / mes', vigencia: 'Todos los días', card: 'MODO (App Galicia)'},
@@ -29,7 +29,7 @@ async function runScraper() {
       ]
     },
     {
-      id: 'naranjax', name: 'Naranja X', icon: '🍊', color: 'linear-gradient(135deg,#ea580c,#f97316)',
+      id: 'naranjax', name: 'Naranja X', icon: '🍊', color: 'linear-gradient(135deg,#F75000,#ff7a33)',
       promos: [
         {rubro: 'supermercados', comercio: 'Supermercado Día', desc: '25% off', tope: '$12.000 / mes', vigencia: 'Martes', card: 'Naranja X', nota: '15% sin comercios adheridos'},
         {rubro: 'supermercados', comercio: 'Jumbo, Disco, Vea', desc: '25% off', tope: '$12.000 / semana', vigencia: 'Martes', card: 'Naranja X (Plan Turbo)', nota: '15% sin Plan Turbo'},
@@ -38,7 +38,7 @@ async function runScraper() {
       ]
     },
     {
-      id: 'mercadopago', name: 'Mercado Pago', icon: '💛', color: 'linear-gradient(135deg,#009EE3,#00B2E3)',
+      id: 'mercadopago', name: 'Mercado Pago', icon: '💛', color: 'linear-gradient(135deg,#FFF059,#ffdf00)',
       promos: [
         {rubro: 'supermercados', comercio: 'Supermercado Día', desc: '10% off', tope: 'Sin tope', vigencia: 'Miércoles', card: 'QR Mercado Pago', nota: 'Aplica dinero en cuenta'},
         {rubro: 'supermercados', comercio: 'Carrefour Online', desc: '20% off', tope: '$15.000', vigencia: 'Lunes', card: 'Dinero en cuenta', nota: 'Solo App/Web'},
@@ -56,7 +56,7 @@ async function runScraper() {
       ]
     },
     {
-      id: 'provincia', name: 'Banco Provincia', icon: '🟢', color: 'linear-gradient(135deg,#006837,#39b54a)',
+      id: 'provincia', name: 'Banco Provincia', icon: '🟢', color: 'linear-gradient(135deg,#279D2E,#34d399)',
       promos: [
         {rubro: 'comercios', comercio: 'Comercios de Barrio', desc: '20% off', tope: '$5.000 por semana', vigencia: 'lun a vie', card: 'Cuenta DNI'},
         {rubro: 'supermercados', comercio: 'Supermercado Día', desc: '20% off', tope: '$8.000', vigencia: 'Lunes', card: 'Cuenta DNI', nota: 'Mínimo ticket $25.000'},
@@ -64,7 +64,7 @@ async function runScraper() {
       ]
     },
     {
-      id: 'nacion', name: 'Banco Nación', icon: '🇦🇷', color: 'linear-gradient(135deg,#0054a6,#0072c6)',
+      id: 'nacion', name: 'Banco Nación', icon: '🇦🇷', color: 'linear-gradient(135deg,#0E7391,#14b8a6)',
       promos: [
         {rubro: 'supermercados', comercio: 'Supermercado Día', desc: '5% off', tope: '$5.000 / semana', vigencia: 'Todos los días', card: 'MODO BNA+', nota: 'Exclusivo Tienda Física'},
         {rubro: 'supermercados', comercio: 'Carrefour, Coto, ChangoMás', desc: '30% off', tope: '$12.000 / semana', vigencia: 'Miércoles', card: 'MODO BNA+'},
@@ -79,14 +79,14 @@ async function runScraper() {
       ]
     },
     {
-      id: 'santander', name: 'Santander', icon: '🔴', color: 'linear-gradient(135deg,#8b0000,#cc0000)',
+      id: 'santander', name: 'Santander', icon: '🔴', color: 'linear-gradient(135deg,#EC0000,#ff4d4d)',
       promos: [
         {rubro: 'combustible', comercio: 'YPF App', desc: '10% off', tope: '$7.500 / mes', vigencia: 'Jueves', card: 'Visa Black/Platinum'},
         {rubro: 'supermercados', comercio: 'Jumbo, Disco, Vea', desc: '20% off', tope: '$20.000 / mes', vigencia: 'Todos los días', card: 'Visa/MC (Jubilados)'}
       ]
     },
     {
-      id: 'macro', name: 'Banco Macro', icon: '🟠', color: 'linear-gradient(135deg,#c2410c,#f97316)',
+      id: 'macro', name: 'Banco Macro', icon: '🟠', color: 'linear-gradient(135deg,#004481,#1e40af)',
       promos: [
         {rubro: 'supermercados', comercio: 'Nini Mayorista', desc: '30% off', tope: '$25.000 / mes', vigencia: 'Miércoles', card: 'MODO Selecta'},
         {rubro: 'combustible', comercio: 'YPF', desc: '30% off', tope: '$25.000 / mes', vigencia: 'Miércoles', card: 'MODO Selecta'}
@@ -99,7 +99,7 @@ async function runScraper() {
       ]
     },
     {
-      id: 'bbva', name: 'BBVA', icon: '💙', color: 'linear-gradient(135deg,#004481,#043263)',
+      id: 'bbva', name: 'BBVA', icon: '💙', color: 'linear-gradient(135deg,#14549C,#2563eb)',
       promos: [
         {rubro: 'supermercados', comercio: 'Supermercado Día', desc: '20% off', tope: '$20.000 / mes', vigencia: 'vie·sáb', card: 'Crédito BBVA (MODO)', nota: 'Mín. $30.000'},
         {rubro: 'supermercados', comercio: 'Coto', desc: '20% off', tope: '$25.000 / mes', vigencia: 'Martes', card: 'Crédito BBVA (MODO)', nota: 'Mín. $60.000'},

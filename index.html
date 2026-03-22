@@ -319,9 +319,9 @@ body{font-family:var(--font);background:var(--bg0);color:var(--text1);min-height
 /* ===== MAPA ===== */
 .leaflet-container { z-index: 10; font-family:var(--font); }
 .leaflet-popup-content-wrapper, .leaflet-popup-tip { background: var(--bg1); color: var(--text1); border: 1px solid var(--glass-border); }
-/* ===== MAPA ===== */
-.leaflet-container { z-index: 10; font-family:var(--font); }
-.leaflet-popup-content-wrapper, .leaflet-popup-tip { background: var(--bg1); color: var(--text1); border: 1px solid var(--glass-border); }
+.bank-logo svg, .promo-pill-icon svg, .wallet-logo-container svg { width: 100%; height: 100%; display: block; border-radius: inherit; }
+.wallet-logo-container { width: 48px; height: 48px; border-radius: 12px; background: rgba(255,255,255,0.1); padding: 8px; margin-bottom: 12px; }
+.promo-pill-icon { width: 42px; height: 42px; border-radius: 10px; display: flex; align-items: center; justify-content: center; overflow: hidden; background: var(--bg2); }
 
 /* ===== SPLASH SCREEN ===== */
 #splash-screen {
@@ -522,10 +522,30 @@ function promoEsHoy(vigencia){
   return false;
 }
 
+const BANK_LOGOS = {
+  galicia: `<svg viewBox="0 0 100 100"><rect width="100" height="100" rx="20" fill="#FA6400"/><text x="50" y="70" text-anchor="middle" font-size="60" fill="white" font-weight="900" font-family="Outfit">G</text></svg>`,
+  santander: `<svg viewBox="0 0 100 100"><rect width="100" height="100" rx="20" fill="#EC0000"/><path d="M50 20 C65 35 65 55 50 80 C35 55 35 35 50 20" fill="white"/></svg>`,
+  bbva: `<svg viewBox="0 0 100 100"><rect width="100" height="100" rx="20" fill="#14549C"/><text x="50" y="62" text-anchor="middle" font-size="24" fill="white" font-weight="900" font-family="Outfit">BBVA</text></svg>`,
+  macro: `<svg viewBox="0 0 100 100"><rect width="100" height="100" rx="20" fill="#004481"/><text x="50" y="70" text-anchor="middle" font-size="55" fill="white" font-weight="bold" font-family="Outfit">M</text></svg>`,
+  nacion: `<svg viewBox="0 0 100 100"><rect width="100" height="100" rx="20" fill="#0E7391"/><text x="50" y="70" text-anchor="middle" font-size="40" fill="white" font-weight="bold" font-family="Outfit">BNA</text></svg>`,
+  provincia: `<svg viewBox="0 0 100 100"><rect width="100" height="100" rx="20" fill="#279D2E"/><text x="50" y="70" text-anchor="middle" font-size="45" fill="white" font-weight="bold" font-family="Outfit">BP</text></svg>`,
+  ciudad: `<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="#155e75"/><text x="50" y="70" text-anchor="middle" font-size="50" fill="white" font-weight="bold" font-family="Outfit">C</text></svg>`,
+  mercadopago: `<svg viewBox="0 0 100 100"><rect width="100" height="100" rx="20" fill="#FFF059"/><path d="M30 50 Q50 20 70 50 Q50 80 30 50" stroke="#009EE3" stroke-width="8" fill="none"/></svg>`,
+  naranjax: `<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="#F75000"/><text x="50" y="72" text-anchor="middle" font-size="65" fill="white" font-weight="900" font-family="Outfit">X</text></svg>`,
+  brubank: `<svg viewBox="0 0 100 100"><rect width="100" height="100" rx="20" fill="#4c1d95"/><text x="50" y="72" text-anchor="middle" font-size="65" fill="white" font-weight="bold" font-family="Outfit">B</text></svg>`,
+  personalpay: `<svg viewBox="0 0 100 100"><rect width="100" height="100" rx="20" fill="#701a75"/><text x="50" y="72" text-anchor="middle" font-size="65" fill="white" font-weight="bold" font-family="Outfit">P</text></svg>`,
+  uala: `<svg viewBox="0 0 100 100"><rect width="100" height="100" rx="20" fill="#4c1d95"/><circle cx="50" cy="50" r="30" fill="white" opacity="0.2"/><text x="50" y="70" text-anchor="middle" font-size="40" fill="white" font-weight="bold" font-family="Outfit">U</text></svg>`,
+  lemon: `<svg viewBox="0 0 100 100"><rect width="100" height="100" rx="20" fill="#c1ff00"/><circle cx="50" cy="50" r="30" fill="black"/><path d="M50 35 L58 50 L50 65 L42 50 Z" fill="#c1ff00"/></svg>`,
+  patagonia: `<svg viewBox="0 0 100 100"><rect width="100" height="100" rx="20" fill="#0033a0"/><text x="50" y="70" text-anchor="middle" font-size="60" fill="white" font-weight="bold" font-family="Outfit">P</text></svg>`,
+  hsbc: `<svg viewBox="0 0 100 100"><rect width="100" height="100" rx="20" fill="#db0011"/><path d="M50 20 L80 50 L50 80 L20 50 Z" fill="white"/></svg>`,
+  icbc: `<svg viewBox="0 0 100 100"><rect width="100" height="100" rx="20" fill="#c8102e"/><text x="50" y="70" text-anchor="middle" font-size="30" fill="white" font-weight="bold" font-family="Outfit">ICBC</text></svg>`,
+  modo: `<svg viewBox="0 0 100 100"><rect width="100" height="100" rx="20" fill="#7c3aed"/><path d="M30 50 L50 20 L50 45 L70 45 L50 80 L50 55 Z" fill="white"/></svg>`
+};
+
 // Se llenará desde promos.json dinámicamente o usa fallback.
 let BANKS = [
   {
-    id: 'galicia', name: 'Banco Galicia', icon: '🏛️', color: 'linear-gradient(135deg,#1e3a8a,#3b82f6)',
+    id: 'galicia', name: 'Banco Galicia', icon: BANK_LOGOS.galicia, color: 'linear-gradient(135deg,#FA6400,#ff8c42)',
     promos: [
       {rubro: 'supermercados', comercio: 'Carrefour, Jumbo, Disco, Vea', desc: '25% off', tope: '$10.000 / semana', vigencia: 'Miércoles', card: 'MODO (App Galicia)', nota: 'Reintegro en cuenta'},
       {rubro: 'combustible', comercio: 'YPF', desc: '15% off', tope: '$5.000 / mes', vigencia: 'Todos los días', card: 'MODO (App Galicia)'},
@@ -533,7 +553,7 @@ let BANKS = [
     ]
   },
   {
-    id: 'naranjax', name: 'Naranja X', icon: '🍊', color: 'linear-gradient(135deg,#ea580c,#f97316)',
+    id: 'naranjax', name: 'Naranja X', icon: BANK_LOGOS.naranjax, color: 'linear-gradient(135deg,#F75000,#ff7a33)',
     promos: [
       {rubro: 'supermercados', comercio: 'Supermercado Día', desc: '25% off', tope: '$12.000 / mes', vigencia: 'Martes', card: 'Naranja X', nota: '15% sin comercios adheridos'},
       {rubro: 'supermercados', comercio: 'Jumbo, Disco, Vea', desc: '25% off', tope: '$12.000 / semana', vigencia: 'Martes', card: 'Naranja X (Plan Turbo)', nota: '15% sin Plan Turbo'},
@@ -542,7 +562,7 @@ let BANKS = [
     ]
   },
   {
-    id: 'mercadopago', name: 'Mercado Pago', icon: '💛', color: 'linear-gradient(135deg,#009EE3,#00B2E3)',
+    id: 'mercadopago', name: 'Mercado Pago', icon: BANK_LOGOS.mercadopago, color: 'linear-gradient(135deg,#FFF059,#ffdf00)',
     promos: [
       {rubro: 'supermercados', comercio: 'Supermercado Día', desc: '10% off', tope: 'Sin tope', vigencia: 'Miércoles', card: 'QR Mercado Pago', nota: 'Aplica dinero en cuenta'},
       {rubro: 'supermercados', comercio: 'Carrefour Online', desc: '20% off', tope: '$15.000', vigencia: 'Lunes', card: 'Dinero en cuenta', nota: 'Solo App/Web'},
@@ -551,7 +571,7 @@ let BANKS = [
     ]
   },
   {
-    id: 'modo', name: 'MODO', icon: '⚡', color: 'linear-gradient(135deg,#7c3aed,#a855f7)',
+    id: 'modo', name: 'MODO', icon: BANK_LOGOS.modo, color: 'linear-gradient(135deg,#7c3aed,#a855f7)',
     promos: [
       {rubro: 'supermercados', comercio: 'Supermercado Día', desc: '20% off', tope: '$20.000 / mes', vigencia: 'vie·sáb', card: 'QR MODO', nota: 'Mín. compra $30.000'},
       {rubro: 'supermercados', comercio: 'Carrefour, ChangoMás', desc: '10% off QR', tope: '$10.000 / mes', vigencia: 'Sábados', card: 'App MODO'},
@@ -559,7 +579,7 @@ let BANKS = [
     ]
   },
   {
-    id: 'provincia', name: 'Banco Provincia', icon: '🟢', color: 'linear-gradient(135deg,#006837,#39b54a)',
+    id: 'provincia', name: 'Banco Provincia', icon: BANK_LOGOS.provincia, color: 'linear-gradient(135deg,#279D2E,#34d399)',
     promos: [
       {rubro: 'comercios', comercio: 'Comercios de Barrio', desc: '20% off', tope: '$5.000 por semana', vigencia: 'lun a vie', card: 'Cuenta DNI'},
       {rubro: 'supermercados', comercio: 'Supermercado Día', desc: '20% off', tope: '$8.000', vigencia: 'Lunes', card: 'Cuenta DNI', nota: 'Mínimo ticket $25.000'},
@@ -567,7 +587,7 @@ let BANKS = [
     ]
   },
   {
-    id: 'nacion', name: 'Banco Nación', icon: '🇦🇷', color: 'linear-gradient(135deg,#0054a6,#0072c6)',
+    id: 'nacion', name: 'Banco Nación', icon: BANK_LOGOS.nacion, color: 'linear-gradient(135deg,#0E7391,#14b8a6)',
     promos: [
       {rubro: 'supermercados', comercio: 'Supermercado Día', desc: '5% off', tope: '$5.000 / semana', vigencia: 'Todos los días', card: 'MODO BNA+', nota: 'Exclusivo Tienda Física'},
       {rubro: 'supermercados', comercio: 'Carrefour, Coto, ChangoMás', desc: '30% off', tope: '$12.000 / semana', vigencia: 'Miércoles', card: 'MODO BNA+'},
@@ -575,7 +595,7 @@ let BANKS = [
     ]
   },
   {
-    id: 'bbva', name: 'BBVA', icon: '💙', color: 'linear-gradient(135deg,#004481,#043263)',
+    id: 'bbva', name: 'BBVA', icon: BANK_LOGOS.bbva, color: 'linear-gradient(135deg,#14549C,#2563eb)',
     promos: [
       {rubro: 'supermercados', comercio: 'Supermercado Día', desc: '20% off', tope: '$20.000 / mes', vigencia: 'vie·sáb', card: 'Crédito BBVA (MODO)', nota: 'Mín. $30.000'},
       {rubro: 'supermercados', comercio: 'Coto', desc: '20% off', tope: '$25.000 / mes', vigencia: 'Martes', card: 'Crédito BBVA (MODO)', nota: 'Mín. $60.000'},
@@ -587,14 +607,14 @@ let BANKS = [
     ]
   },
   {
-    id: 'personalpay', name: 'Personal Pay', icon: '📱', color: 'linear-gradient(135deg,#701a75,#c026d3)',
+    id: 'personalpay', name: 'Personal Pay', icon: BANK_LOGOS.personalpay, color: 'linear-gradient(135deg,#701a75,#c026d3)',
     promos: [
       {rubro: 'supermercados', comercio: 'Supermercado Día', desc: '20% off', tope: '$20.000 / día', vigencia: 'Jueves', card: 'Personal Pay (Nivel 3)', nota: 'Mín. $25.000'},
       {rubro: 'combustible', comercio: 'Shell', desc: '20% off', tope: '$2.000', vigencia: 'Todos los días', card: 'Visa Personal Pay'}
     ]
   },
   {
-    id: 'ciudad', name: 'Banco Ciudad', icon: '🏙️', color: 'linear-gradient(135deg,#155e75,#0891b2)',
+    id: 'ciudad', name: 'Banco Ciudad', icon: BANK_LOGOS.ciudad, color: 'linear-gradient(135deg,#155e75,#0891b2)',
     promos: [
       {rubro: 'supermercados', comercio: 'Supermercado Día', desc: '20% off', tope: '$20.000 / mes', vigencia: 'Lunes', card: 'MODO (Banco Ciudad)', nota: 'Mín. $20.000'}
     ]
@@ -684,7 +704,7 @@ function renderHome(dolarData){
     document.getElementById('ai-sub-text').textContent=`${bestPromo.comercio} · Tope ${bestPromo.tope} · ${bestPromo.vigencia}`;
     document.getElementById('ai-tags').innerHTML=
       `<span class="badge badge-green">✅ ${bestPromo.rubro}</span>`+
-      `<span class="badge badge-blue">${bestPromo.card}</span>`+
+      `<span class="badge badge-blue">💳 ${bestPromo.card}</span>`+
       `<span class="badge badge-amber">⏱ Hoy</span>`;
   }else{
     const hasCards = userCards.length > 0;
@@ -707,7 +727,7 @@ function renderHome(dolarData){
     if(b.promos) {
       b.promos.forEach(p=>{
         if (promoEsHoy(p.vigencia)) {
-          todaysPromos.push({...p,bank:b.name,icon:b.icon,color:b.color});
+          todaysPromos.push({...p, bank: b.name, icon: b.icon, color: b.color, bankId: b.id});
         }
       });
     }
@@ -724,8 +744,9 @@ function renderHome(dolarData){
   todaysPromos.forEach(p=>{
     const d=document.createElement('div');
     d.className='promo-pill';
+    const bankLogo = BANK_LOGOS[p.bankId] || p.icon;
     d.innerHTML=`
-      <div class="promo-pill-icon">${p.icon}</div>
+      <div class="promo-pill-icon">${bankLogo}</div>
       <div class="promo-pill-body">
         <div class="promo-pill-title">${p.comercio} <span class="badge badge-hoy" style="padding:1px 4px;font-size:9px;">HOY</span></div>
         <div class="promo-pill-sub">${p.bank} · tope ${p.tope}</div>
@@ -769,12 +790,13 @@ function renderPromos(rubro='todos'){
     const esMiBanco = effectiveUserCards.includes(bank.id);
     promasHoyCount += promos.filter(p => promoEsHoy(p.vigencia) && esMiBanco).length;
     const active = esMiBanco;
+    const bankLogo = BANK_LOGOS[bank.id] || bank.icon;
     const el=document.createElement('div');
     el.className='promo-card';
     el.style.opacity=active?1:0.55;
     el.innerHTML=`
       <div class="promo-card-head">
-        <div class="bank-logo" style="background:${bank.color}">${bank.icon}</div>
+        <div class="bank-logo" style="background:${bank.color}">${bankLogo}</div>
         <div class="promo-card-head-info">
           <div class="bank-name">${bank.name} ${active?'<span class="badge badge-green">✔ mi banco</span>':''}</div>
           <div class="bank-promos-count">${promos.filter(p=>promoEsHoy(p.vigencia)).length} activas hoy · ${promos.length} total</div>
@@ -828,39 +850,40 @@ function filterPromos(rubro,btn){
 ============================================================ */
 const CARD_STYLES=[
   // Nuevos
-  {id:'nacion',name:'Banco Nación',sub:'BNA+ / Tarjetas',network:'VISA',color:'linear-gradient(135deg,#0054a6,#0072c6)',text:'#fff'},
-  {id:'provincia',name:'Banco Provincia',sub:'Cuenta DNI',network:'VISA',color:'linear-gradient(135deg,#006837,#39b54a)',text:'#fff'},
+  {id:'nacion',name:'Banco Nación',sub:'BNA+ / Tarjetas',network:'VISA',color:'linear-gradient(135deg,#0E7391,#14b8a6)',text:'#fff'},
+  {id:'provincia',name:'Banco Provincia',sub:'Cuenta DNI',network:'VISA',color:'linear-gradient(135deg,#279D2E,#34d399)',text:'#fff'},
   {id:'patagonia',name:'Banco Patagonia',sub:'Visa / Mastercard',network:'VISA',color:'linear-gradient(135deg,#0033a0,#005eb8)',text:'#fff'},
   {id:'icbc',name:'ICBC',sub:'Visa / Mastercard',network:'VISA',color:'linear-gradient(135deg,#c8102e,#e31837)',text:'#fff'},
   {id:'hsbc',name:'HSBC',sub:'Visa / Mastercard',network:'VISA',color:'linear-gradient(135deg,#db0011,#ff0000)',text:'#fff'},
   // Bancos tradicionales
-  {id:'galicia',name:'Galicia',sub:'Visa / Mastercard Crédito',network:'VISA',color:'linear-gradient(135deg,#1e3a8a,#3b82f6)',text:'#fff'},
-  {id:'santander',name:'Santander',sub:'Visa / Mastercard',network:'VISA',color:'linear-gradient(135deg,#8b0000,#cc0000)',text:'#fff'},
-  {id:'bbva',name:'BBVA',sub:'Visa / Mastercard',network:'MODO',color:'linear-gradient(135deg,#004481,#111e6c)',text:'#fff'},
-  {id:'macro',name:'Banco Macro',sub:'Visa Selecta',network:'VISA',color:'linear-gradient(135deg,#c2410c,#f97316)',text:'#fff'},
+  {id:'galicia',name:'Galicia',sub:'Visa / Mastercard Crédito',network:'VISA',color:'linear-gradient(135deg,#FA6400,#ff8c42)',text:'#fff'},
+  {id:'santander',name:'Santander',sub:'Visa / Mastercard',network:'VISA',color:'linear-gradient(135deg,#EC0000,#ff4d4d)',text:'#fff'},
+  {id:'bbva',name:'BBVA',sub:'Visa / Mastercard',network:'MODO',color:'linear-gradient(135deg,#14549C,#2563eb)',text:'#fff'},
+  {id:'macro',name:'Banco Macro',sub:'Visa Selecta',network:'VISA',color:'linear-gradient(135deg,#004481,#1e40af)',text:'#fff'},
   {id:'ciudad',name:'Banco Ciudad',sub:'Visa / Mastercard',network:'MC',color:'linear-gradient(135deg,#155e75,#0891b2)',text:'#fff'},
   // Billeteras / QR
-  {id:'mercadopago',name:'Mercado Pago',sub:'Cuenta / Prepaga',network:'MP',color:'linear-gradient(135deg,#009EE3,#00B2E3)',text:'#fff'},
-  {id:'naranjax',name:'Naranja X',sub:'Tarjeta + Billetera',network:'NX',color:'linear-gradient(135deg,#ea580c,#f97316)',text:'#fff'},
+  {id:'mercadopago',name:'Mercado Pago',sub:'Cuenta / Prepaga',network:'MP',color:'linear-gradient(135deg,#FFF059,#ffdf00)',text:'#fff'},
+  {id:'naranjax',name:'Naranja X',sub:'Tarjeta + Billetera',network:'NX',color:'linear-gradient(135deg,#F75000,#ff7a33)',text:'#fff'},
   {id:'personalpay',name:'Personal Pay',sub:'Billetera digital',network:'📱',color:'linear-gradient(135deg,#701a75,#c026d3)',text:'#fff'},
   // Fintechs / Neobancos
   {id:'uala',name:'Ualá',sub:'Prepaga Mastercard',network:'MC',color:'linear-gradient(135deg,#4c1d95,#7c3aed)',text:'#fff'},
-  {id:'brubank',name:'Brubank',sub:'Visa Digital',network:'VISA',color:'linear-gradient(135deg,#0369a1,#0ea5e9)',text:'#fff'},
+  {id:'brubank',name:'Brubank',sub:'Visa Digital',network:'VISA',color:'linear-gradient(135deg,#4c1d95,#6d28d9)',text:'#fff'},
   {id:'yoy',name:'YOY',sub:'Cashback en compras',network:'YOY',color:'linear-gradient(135deg,#854d0e,#eab308)',text:'#fff'},
-  {id:'lemon',name:'Lemon Cash',sub:'Crypto + Pesos',network:'🍋',color:'linear-gradient(135deg,#365314,#65a30d)',text:'#fff'},
+  {id:'lemon',name:'Lemon Cash',sub:'Crypto + Pesos',network:'🍋',color:'linear-gradient(135deg,#c1ff00,#000)',text:'#000'},
 ];
 function renderCards(){
   const cl=document.getElementById('cards-list');
   cl.innerHTML='';
   CARD_STYLES.forEach(c=>{
     const active=userCards.includes(c.id);
+    const bankLogo = BANK_LOGOS[c.id] || `<span>${c.name.charAt(0)}</span>`;
     const el=document.createElement('div');
     el.className='wallet-card '+(active?'active-card':'inactive-card');
     el.style.background=c.color;
     el.style.color=c.text;
     el.innerHTML=`
       <div>
-        <div class="wallet-chip"></div>
+        <div class="wallet-logo-container">${bankLogo}</div>
         <div class="wallet-number">•••• •••• •••• ••••</div>
       </div>
       <div class="wallet-footer">
